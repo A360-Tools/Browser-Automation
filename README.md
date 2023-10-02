@@ -26,7 +26,10 @@ Navigation within web applications is made more flexible with options to go back
 
 The package addresses issues related to table extraction from HTML content. It includes fixes and enhancements that make it easier to extract data from tables in web pages.
 
+## Important Note for Community Edition Control Room Users
+- **Warning**: Please be aware that in the Community Edition Control Room, the system does not automatically set the latest version of imported packages as the default. To ensure you are using the latest and fully functional features, you must manually change the package version to the latest version in every bot.
 
+  
 ## Building the Project
 
 You can build this project using Gradle with the following command:
