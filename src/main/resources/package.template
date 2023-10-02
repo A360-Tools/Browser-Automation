@@ -1,0 +1,15 @@
+{
+  "name": "BrowserAutomation",
+  "label": "[[label]]",
+  "description": "[[description]]",
+   "sessionType": {
+          "label": "[[sessionLabel]]",
+          "description": "[[sessionDescription]]"
+      },
+  "group": "",
+  "artifactName": "",
+  "packageVersion": "",
+  "codeVersion": "",
+  "author": "",
+  "commands": []
+}

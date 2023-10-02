@@ -1,0 +1,6 @@
+{
+  "label": "Browser Automation",
+  "description": "Provides commands for Browser Automation actions.",
+  "sessionLabel": "Browser Automation session",
+  "sessionDescription": "Browser Automation session storing information related to Browser Automation operations."
+}
