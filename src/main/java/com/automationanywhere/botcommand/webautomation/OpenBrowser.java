@@ -16,16 +16,18 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
 
 
 @BotCommand
-@CommandPkg(label = "Open Page", name = "openpage",
+@CommandPkg(label = "Open URL", name = "openurl",
         description = "Open Page with provided URL",
-        node_label = "{{url}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Page", text_color = "#2F4F4F", background_color = "#2F4F4F")
+        node_label = "{{url}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Navigation",
+        text_color = "#2F4F4F", background_color = "#2F4F4F")
 
 
 public class OpenBrowser {
 
     @Execute
     public void action(
-            @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session",
+                    description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -66,6 +68,8 @@ public class OpenBrowser {
                 case "fullscreen":
                     utils.fullScreenCurrentWindow(driver);
                     break;
+                default:
+                    throw new BotCommandException("Invalid selection method");
             }
 
             utils.openURL(driver, url);

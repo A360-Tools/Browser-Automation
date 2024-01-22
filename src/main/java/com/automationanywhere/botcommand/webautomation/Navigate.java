@@ -16,7 +16,7 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
 
 @BotCommand
 @CommandPkg(label = "Navigate Page", name = "navigatepage",
-        description = "Perform navigation",
+        description = "Perform navigation on currently active tab",
         node_label = "{{navigateOption}} for session {{session}}", icon = "pkg.svg", group_label = "Page", comment = true, text_color = "#2F4F4F", background_color = "#2F4F4F")
 
 
@@ -31,8 +31,8 @@ public class Navigate {
             @Idx(index = "2", type = AttributeType.RADIO, options = {
                     @Idx.Option(index = "2.1", pkg = @Pkg(label = "Back", value = "back")),
                     @Idx.Option(index = "2.2", pkg = @Pkg(label = "Forward", value = "forward")),
-                    @Idx.Option(index = "2.3", pkg = @Pkg(label = "Refresh", value = "refresh")),
-                    @Idx.Option(index = "2.4", pkg = @Pkg(label = "New Tab", value = "newtab", description = "moves driver focus to new tab"))})
+                    @Idx.Option(index = "2.3", pkg = @Pkg(label = "Refresh", value = "refresh"))
+            })
             @Pkg(label = "Navigation Type", default_value = "newtab", default_value_type = STRING) @NotEmpty String navigateOption
     ) throws Exception {
 
@@ -54,9 +54,8 @@ public class Navigate {
                 case "refresh":
                     utils.refreshPage(driver);
                     break;
-                case "newtab":
-                    utils.newTab(driver);
-                    break;
+                default:
+                    throw new BotCommandException("Invalid selection method");
             }
 
         } catch (Exception e) {

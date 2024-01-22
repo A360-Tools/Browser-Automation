@@ -7,6 +7,7 @@ import com.automationanywhere.botcommand.data.impl.TableValue;
 import com.automationanywhere.botcommand.data.model.Schema;
 import com.automationanywhere.botcommand.data.model.table.Row;
 import com.automationanywhere.botcommand.data.model.table.Table;
+import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.google.common.io.Files;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.*;
+import java.util.regex.Pattern;
 
 
 public class BrowserUtils {
@@ -72,7 +74,7 @@ public class BrowserUtils {
 
     }
 
- 
+
     public void refreshPage(WebDriver driver) {
 
         driver.navigate().refresh();
@@ -460,6 +462,25 @@ public class BrowserUtils {
 
     public void switchToWindow(WebDriver driver, String windowHandle) {
         driver.switchTo().window(windowHandle);
+    }
+
+    public void switchToWindowWithTitleRegex(WebDriver driver, String titleRegex) {
+        String originalWindow = driver.getWindowHandle();
+        Pattern pattern = Pattern.compile(titleRegex);
+        boolean matchFound = false;
+
+        for (String handle : driver.getWindowHandles()) {
+            driver.switchTo().window(handle);
+            if (pattern.matcher(driver.getTitle()).find()) {
+                matchFound = true;
+                break; //
+            }
+        }
+
+        if (!matchFound) {
+            driver.switchTo().window(originalWindow);
+            throw new BotCommandException("No window with title matching regex '" + titleRegex + "' found");
+        }
     }
 
     public void newTab(WebDriver driver) {

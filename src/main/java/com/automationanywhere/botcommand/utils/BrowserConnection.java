@@ -19,14 +19,15 @@ public class BrowserConnection implements CloseableSessionObject {
     private final String browser;
     private WebDriver driver;
 
-    public BrowserConnection(String profilePath, String browser, Boolean headless, Integer port,
-                             String libraryCode, String driverPath) throws Exception {
+    public BrowserConnection(String profilePath, String browser, Boolean headless,
+                             String libraryCode, String driverPath, List<String> stringArguments) throws Exception {
         this.library = (libraryCode == null) ? "" : libraryCode;
 
         List<String> arguments = new ArrayList<>();
         arguments.add("--disable-gpu");
         arguments.add("--ignore-certificate-errors");
         arguments.add("--disable-blink-features=AutomationControlled");
+        arguments.addAll(stringArguments);
         if (headless)
             arguments.add("--headless=new");
         if (!profilePath.isBlank()) {
@@ -36,12 +37,12 @@ public class BrowserConnection implements CloseableSessionObject {
         switch (browser.toLowerCase()) {
             case "chrome":
                 this.browser = "chrome";
-                ChromeOptions chromeOptions = getChromeOptions(arguments, port);
+                ChromeOptions chromeOptions = getChromeOptions(arguments);
                 setupChromeDriver(driverPath, chromeOptions);
                 break;
             case "edge":
                 this.browser = "edge";
-                EdgeOptions edgeOptions = getEdgeOptions(arguments, port);
+                EdgeOptions edgeOptions = getEdgeOptions(arguments);
                 setupEdgeDriver(driverPath, edgeOptions);
                 break;
             default:
@@ -73,25 +74,19 @@ public class BrowserConnection implements CloseableSessionObject {
         }
     }
 
-    private ChromeOptions getChromeOptions(List<String> arguments, Integer port) {
+    private ChromeOptions getChromeOptions(List<String> arguments) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments(arguments);
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-        if (port != null) {
-            options.setExperimentalOption("debuggerAddress", "localhost:" + port);
-        }
         return options;
     }
 
-    private EdgeOptions getEdgeOptions(List<String> arguments, Integer port) {
+    private EdgeOptions getEdgeOptions(List<String> arguments) {
         EdgeOptions options = new EdgeOptions();
         options.addArguments(arguments);
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-        if (port != null) {
-            options.setExperimentalOption("debuggerAddress", "localhost:" + port);
-        }
         return options;
     }
 
@@ -105,10 +100,6 @@ public class BrowserConnection implements CloseableSessionObject {
 
     public String getLibrary() {
         return this.library;
-    }
-
-    public String getBrowserType() {
-        return this.browser;
     }
 
     @Override

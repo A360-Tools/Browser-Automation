@@ -1,27 +1,43 @@
 import com.automationanywhere.botcommand.utils.BrowserConnection;
-import com.automationanywhere.botcommand.utils.BrowserUtils;
+import com.automationanywhere.botcommand.webautomation.OpenBrowser;
+import com.automationanywhere.botcommand.webautomation.OpenNewTab;
+import com.automationanywhere.botcommand.webautomation.SelectWindow;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import java.awt.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class BrowserTest {
 
-    private WebDriver driver;
+    private static BrowserConnection session;
+    private static WebDriver driver;
 
     @BeforeTest
     public void setup() throws Exception {
-        BrowserConnection connection = new BrowserConnection("", "Chrome", Boolean.FALSE, null, "", "");
-        driver = connection.getDriver();
+        session = new BrowserConnection("", "Chrome", Boolean.FALSE, null, "", null);
+        driver = session.getDriver();
     }
 
     @Test
-    public void launch() throws InterruptedException, AWTException {
-        driver.get("https://developer.automationanywhere.com/challenges/financialvalidation-applogin.html");
-        BrowserUtils utils = new BrowserUtils();
-        utils.doClick(driver, "inputEmail", BrowserUtils.ID, BrowserUtils.Click, "", 0, "className");
-        utils.sendKeys(driver, "inputEmail", BrowserUtils.ID, "abcd@email.com", "", 0, "className");
-        Thread.sleep(4000);
+    public void testOpenPageMaximized() throws Exception {
+        OpenBrowser openBrowser = new OpenBrowser();
+        openBrowser.action(session, "https://example.com", "maximized", null, null);
+        assertEquals(driver.getTitle(), "Example Domain");
+    }
+
+    @Test
+    public void testChangeWindowByTitle() throws Exception {
+        OpenBrowser openBrowser = new OpenBrowser();
+        SelectWindow selectWindow = new SelectWindow();
+        OpenNewTab openNewTab = new OpenNewTab();
+        openBrowser.action(session, "https://www.google.com", "maximized", null, null);
+        openNewTab.action(session);
+        openBrowser.action(session, "https://www.yahoo.com", "maximized", null, null);
+        openNewTab.action(session);
+        openBrowser.action(session, "https://www.reddit.com", "maximized", null, null);
+        selectWindow.action(session, "byTitle", "Yahoo");
+        assertTrue(driver.getTitle().contains("Yahoo"));
     }
 }
