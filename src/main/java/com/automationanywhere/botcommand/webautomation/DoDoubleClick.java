@@ -69,7 +69,7 @@ public class DoDoubleClick {
             boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, jsPath, type);
+            WebElement element = BrowserUtils.getElement(driver, search, type);
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
                     Actions actions = new Actions(driver);

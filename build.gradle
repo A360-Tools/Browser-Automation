@@ -75,7 +75,7 @@ configure(allprojects) {
 }
 
 dependencies {
-    implementation 'io.github.bonigarcia:webdrivermanager:5.6.3'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.6.4'
     implementation 'org.seleniumhq.selenium:selenium-support:4.17.0'
     implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.17.0'
     implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.17.0'

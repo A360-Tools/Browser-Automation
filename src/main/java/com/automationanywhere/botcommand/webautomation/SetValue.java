@@ -16,8 +16,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 @BotCommand
-@CommandPkg(label = "Set Attribute", name = "setvalueelement",
-        description = "Set attribute value of an element",
+@CommandPkg(label = "Set Value", name = "setvalueelement",
+        description = "Set value of an element",
         node_label = "of element {{search}} for session {{session}}", icon = "pkg.svg",
         comment = true, group_label = "Set", text_color = "#2F4F4F", background_color = "#2F4F4F")
 
@@ -56,13 +56,7 @@ public class SetValue {
 
             @Idx(index = "6", type = AttributeType.TEXT)
             @Pkg(label = "Wait for Attribute Value", default_value_type = DataType.STRING, default_value = "className")
-            @NotEmpty String attribute,
-
-            @Idx(index = "7", type = AttributeType.TEXT)
-            @Pkg(label = "Attribute to set", default_value = "value", default_value_type = DataType.STRING)
-            @NotEmpty
-            String attributename
-
+            @NotEmpty String attribute
     ) {
         try {
             if (session.isClosed())
@@ -74,10 +68,16 @@ public class SetValue {
             boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, jsPath, type);
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            jsExecutor.executeScript("arguments[0].setAttribute(arguments[1], arguments[2]);",
-                    element, attributename, newvalue.getInsecureString());
+            WebElement element = BrowserUtils.getElement(driver, search, type);
+            ((JavascriptExecutor) driver).executeScript(
+                    "var input = arguments[0];" + // Reference to your element
+                            "input.value = arguments[1];" + // Set the value you want
+                            "var event = new Event('change', {" +
+                            "bubbles: true," + // Event should bubble for most event handlers
+                            "cancelable: true" + // Event can be canceled
+                            "});" +
+                            "input.dispatchEvent(event);", // Dispatch the 'change' event
+                    element,newvalue.getInsecureString());
         } catch (Exception e) {
             throw new BotCommandException("SETVALUE " + search + " " + type + " : " + e.getMessage());
         }

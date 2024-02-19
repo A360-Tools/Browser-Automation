@@ -59,7 +59,7 @@ public class BrowserConnection implements CloseableSessionObject {
             System.setProperty("webdriver.chrome.driver", driverPath);
             this.driver = new ChromeDriver(options);
         } else {
-            WebDriverManager.chromedriver().clearDriverCache().setup();
+            // WebDriverManager.chromedriver().clearDriverCache().setup();
             this.driver = WebDriverManager.chromedriver().capabilities(options).create();
         }
     }
@@ -69,7 +69,7 @@ public class BrowserConnection implements CloseableSessionObject {
             System.setProperty("webdriver.edge.driver", driverPath);
             this.driver = new EdgeDriver(options);
         } else {
-            WebDriverManager.edgedriver().clearDriverCache().setup();
+           // WebDriverManager.edgedriver().clearDriverCache().setup();
             this.driver = WebDriverManager.edgedriver().capabilities(options).create();
         }
     }

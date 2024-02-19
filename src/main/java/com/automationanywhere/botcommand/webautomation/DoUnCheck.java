@@ -70,7 +70,7 @@ public class DoUnCheck {
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
 
-            WebElement element = BrowserUtils.getElement(driver, jsPath, type);
+            WebElement element = BrowserUtils.getElement(driver, search, type);
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
                     if (element.isSelected())
@@ -78,8 +78,14 @@ public class DoUnCheck {
                     break;
                 case BrowserUtils.MODE_JAVASCRIPT:
                     ((JavascriptExecutor) driver).executeScript(
-                            "arguments[0].checked=false;",
-                            element);
+                            "var input = arguments[0];" + // Reference to the checkbox or radio button element
+                                    "input.checked = false;" + // Set the 'checked' property to true
+                                    "var event = new Event('change', {" +
+                                    "    bubbles: true," + // The event should bubble up through the DOM
+                                    "    cancelable: true" + // The event can be canceled
+                                    "});" +
+                                    "input.dispatchEvent(event);", // Dispatch the 'change' event on the input element
+                            element); // 'element' is the WebElement reference to your input
                     break;
                 default:
                     break;

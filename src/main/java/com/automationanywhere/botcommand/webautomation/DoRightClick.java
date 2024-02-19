@@ -72,14 +72,15 @@ public class DoRightClick {
             boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, jsPath, type);
+            WebElement element = BrowserUtils.getElement(driver, search, type);
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
                     Actions actions = new Actions(driver);
                     actions.contextClick(element).perform();
                     break;
                 case BrowserUtils.MODE_JAVASCRIPT:
-                    ((JavascriptExecutor) driver).executeScript("var evt = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, view: window });" +
+                    ((JavascriptExecutor) driver).executeScript(
+                            "var evt = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, view: window });" +
                             "arguments[0].dispatchEvent(evt);", element);
                     break;
                 default:

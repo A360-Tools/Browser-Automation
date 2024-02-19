@@ -44,7 +44,8 @@ public class DragandDrop {
                     @Idx.Option(index = "4.1", pkg = @Pkg(label = "Search by Element XPath", value = BrowserUtils.XPATH)),
                     @Idx.Option(index = "4.2", pkg = @Pkg(label = "Search by Element Id", value = BrowserUtils.ID)),
                     @Idx.Option(index = "4.3", pkg = @Pkg(label = "Search by Tag name", value = BrowserUtils.TAG)),
-                    @Idx.Option(index = "4.4", pkg = @Pkg(label = "Search by CSS Selector", value = BrowserUtils.CSS))})
+                    @Idx.Option(index = "4.4", pkg = @Pkg(label = "Search by CSS Selector", value = BrowserUtils.CSS)),
+                    @Idx.Option(index = "4.5", pkg = @Pkg(label = "JavaScript", value = BrowserUtils.JS))})
             @Pkg(label = "Search Type", default_value = BrowserUtils.CSS, default_value_type = DataType.STRING)
             @NotEmpty String type,
 
@@ -73,8 +74,8 @@ public class DragandDrop {
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + toelement);
 
-            WebElement fromElement = BrowserUtils.getElement(driver, jsFromPath, type);
-            WebElement toElement = BrowserUtils.getElement(driver, jsToPath, type);
+            WebElement fromElement = BrowserUtils.getElement(driver, fromelement, type);
+            WebElement toElement = BrowserUtils.getElement(driver, toelement, type);
             Actions actions = new Actions(driver);
             actions.dragAndDrop(fromElement, toElement).perform();
 

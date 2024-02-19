@@ -72,17 +72,20 @@ public class ClearInput {
             boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, jsPath, type);
+            WebElement element = BrowserUtils.getElement(driver, search, type);
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
                     element.clear();
                     break;
                 case BrowserUtils.MODE_JAVASCRIPT:
                     ((JavascriptExecutor) driver).executeScript(
-                            "var input = arguments[0];" +
-                                    "input.value = '';" +
-                                    "var event = new Event('change');" +
-                                    "input.dispatchEvent(event);",
+                            "var input = arguments[0];" + // Reference to your element
+                                    "input.value = '';" + // Set the value you want
+                                    "var event = new Event('change', {" +
+                                    "bubbles: true," + // Event should bubble for most event handlers
+                                    "cancelable: true" + // Event can be canceled
+                                    "});" +
+                                    "input.dispatchEvent(event);", // Dispatch the 'change' event
                             element);
                     break;
                 default:

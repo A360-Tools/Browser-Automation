@@ -18,8 +18,8 @@ import org.openqa.selenium.WebElement;
 import static com.automationanywhere.commandsdk.model.DataType.STRING;
 
 @BotCommand
-@CommandPkg(label = "Get Attribute", name = "getvalueelement",
-        description = "Get attribute's value of an element",
+@CommandPkg(label = "Get Value", name = "getvalueelement",
+        description = "Get value of an element",
         node_label = "of element {{search}} and assign to {{returnTo}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Get", text_color = "#2F4F4F", background_color = "#2F4F4F",
         return_type = STRING, return_label = "Value", return_required = true)
 
@@ -50,19 +50,7 @@ public class GetValue {
             @NotEmpty Number timeout,
 
             @Idx(index = "5", type = AttributeType.TEXT) @Pkg(label = "Wait for Attribute Value", default_value_type
-                    = STRING, default_value = "className") @NotEmpty String attribute,
-            @Idx(index = "6", type = AttributeType.SELECT, options = {
-                    @Idx.Option(index = "6.1", pkg = @Pkg(label = "Simulate", value = BrowserUtils.MODE_SIMULATE)),
-                    @Idx.Option(index = "6.2", pkg = @Pkg(label = "Javascript",
-                            value = BrowserUtils.MODE_JAVASCRIPT))})
-            @Pkg(label = "Input Type", default_value = BrowserUtils.MODE_SIMULATE, default_value_type = STRING)
-            @SelectModes
-            @NotEmpty String interactionMode,
-
-            @Idx(index = "7", type = AttributeType.TEXT)
-            @Pkg(label = "Attribute", default_value = "value", default_value_type = STRING)
-            @NotEmpty
-            String attributename
+                    = STRING, default_value = "className") @NotEmpty String attribute
     ) {
         String value = "";
         try {
@@ -74,19 +62,12 @@ public class GetValue {
             boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, jsPath, type);
-            switch (interactionMode) {
-                case BrowserUtils.MODE_SIMULATE:
-                    value = element.getAttribute(attributename);
-                    break;
-                case BrowserUtils.MODE_JAVASCRIPT:
-                    value = ((JavascriptExecutor) driver).executeScript(
-                            "arguments[0].arguments[1];",
-                            element, attributename).toString();
-                    break;
-                default:
-                    break;
-            }
+            WebElement element = BrowserUtils.getElement(driver, search, type);
+
+            value = ((JavascriptExecutor) driver).executeScript(
+                    "return arguments[0].value;",
+                    element).toString();
+
         } catch (Exception e) {
             throw new BotCommandException("GETVALUE " + search + " " + type + " : " + e.getMessage());
         }

@@ -17,8 +17,8 @@ import org.openqa.selenium.WebElement;
 import java.util.List;
 
 @BotCommand
-@CommandPkg(label = "Set attributes", name = "setvalueselement",
-        description = "Set attribute value of an element list",
+@CommandPkg(label = "Set Values", name = "setvalueselement",
+        description = "Set values of an element list",
         node_label = "for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Set", text_color = "#2F4F4F", background_color = "#2F4F4F")
 
 
@@ -47,12 +47,7 @@ public class SetAllValues {
 
             @Idx(index = "4", type = AttributeType.LIST)
             @Pkg(label = "Values", default_value_type = DataType.STRING)
-            @NotEmpty List<StringValue> newvalues,
-
-            @Idx(index = "5", type = AttributeType.TEXT)
-            @Pkg(label = "Attribute to set", default_value = "value", default_value_type = DataType.STRING)
-            @NotEmpty
-            String attributename
+            @NotEmpty List<StringValue> newvalues
     ) {
         try {
             if (session.isClosed())
@@ -62,10 +57,16 @@ public class SetAllValues {
             int i = 0;
             while (i < searchList.size()) {
                 String search = searchList.get(i).get();
-                String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-                WebElement element = BrowserUtils.getElement(driver, jsPath, type);
-                jsExecutor.executeScript("arguments[0].setAttribute(arguments[1], arguments[2]);",
-                        element, attributename, newvalues.get(i).get());
+                WebElement element = BrowserUtils.getElement(driver, search, type);
+                jsExecutor.executeScript(
+                        "var input = arguments[0];" + // Reference to your element
+                                "input.value = arguments[1];" + // Set the value you want
+                                "var event = new Event('change', {" +
+                                "bubbles: true," + // Event should bubble for most event handlers
+                                "cancelable: true" + // Event can be canceled
+                                "});" +
+                                "input.dispatchEvent(event);", // Dispatch the 'change' event
+                        element,newvalues.get(i).get());
                 i++;
             }
 

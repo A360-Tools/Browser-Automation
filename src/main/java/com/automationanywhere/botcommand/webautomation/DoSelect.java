@@ -77,22 +77,27 @@ public class DoSelect {
             boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
             if (!elementLoaded)
                 throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, jsPath, type);
+            WebElement element = BrowserUtils.getElement(driver, search, type);
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
                     new Select(element).selectByVisibleText(newvalue);
                     break;
                 case BrowserUtils.MODE_JAVASCRIPT:
                     ((JavascriptExecutor) driver).executeScript(
-                            "var dropdown = arguments[0];" +
-                                    "var optionText = arguments[1];" +
-                                    "for (var i = 0; i < dropdown.options.length; ++i) {" +
-                                    "    if (dropdown.options[i].text === optionText) {" +
-                                    "        dropdown.options[i].selected = true;" +
-                                    "        break;" +
+                            "var dropdown = arguments[0];" + // The dropdown element
+                                    "var optionText = arguments[1];" + // The text of the option to select
+                                    "Array.from(dropdown.options).forEach(function(option) {" + // Iterate over options
+                                    "    if (option.text === optionText) {" + // Check if the option's text matches
+                                    "        option.selected = true;" + // Select the matching option
                                     "    }" +
-                                    "}",
+                                    "});" +
+                                    "var event = new Event('change', {" + // Create a new 'change' event
+                                    "    bubbles: true," + // Event should bubble for most event handlers
+                                    "    cancelable: true" + // Event can be canceled
+                                    "});" +
+                                    "dropdown.dispatchEvent(event);", // Dispatch the 'change' event
                             element, newvalue);
+
                     break;
                 default:
                     break;

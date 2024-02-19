@@ -22,8 +22,8 @@ import java.util.List;
 
 
 @BotCommand
-@CommandPkg(label = "Get Attributes", name = "getvalueselement",
-        description = "Get attribute value of an element list",
+@CommandPkg(label = "Get Values", name = "getvalueselement",
+        description = "Get value of an element list",
         node_label = "and assign to {{returnTo}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Get", text_color = "#2F4F4F", background_color = "#2F4F4F",
         return_type = DataType.DICTIONARY, return_sub_type = DataType.STRING, return_description = "key = <search>", return_label = "Values", return_required = true)
 
@@ -51,20 +51,7 @@ public class GetAllValues {
                     @Idx.Option(index = "3.4", pkg = @Pkg(label = "Search by CSS Selector", value = BrowserUtils.CSS)),
                     @Idx.Option(index = "3.5", pkg = @Pkg(label = "JavaScript", value = BrowserUtils.JS))})
             @Pkg(label = "Search Type", default_value = BrowserUtils.CSS, default_value_type = DataType.STRING)
-            @NotEmpty String type,
-
-            @Idx(index = "4", type = AttributeType.TEXT)
-            @Pkg(label = "Attribute", default_value = "value", default_value_type = DataType.STRING)
-            @NotEmpty
-            String attributename,
-
-            @Idx(index = "5", type = AttributeType.SELECT, options = {
-                    @Idx.Option(index = "5.1", pkg = @Pkg(label = "Simulate", value = BrowserUtils.MODE_SIMULATE)),
-                    @Idx.Option(index = "5.2", pkg = @Pkg(label = "Javascript",
-                            value = BrowserUtils.MODE_JAVASCRIPT))})
-            @Pkg(label = "Input Type", default_value = BrowserUtils.MODE_JAVASCRIPT, default_value_type = DataType.STRING)
-            @SelectModes
-            @NotEmpty String interactionMode
+            @NotEmpty String type
     ) {
         LinkedHashMap<String, Value> values = new LinkedHashMap<>();
         try {
@@ -76,20 +63,10 @@ public class GetAllValues {
             for (StringValue stringValue : searchList) {
                 String value = "";
                 String search = stringValue.get();
-                String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-                WebElement element = BrowserUtils.getElement(driver, jsPath, type);
-                switch (interactionMode) {
-                    case BrowserUtils.MODE_SIMULATE:
-                        value = element.getAttribute(attributename);
-                        break;
-                    case BrowserUtils.MODE_JAVASCRIPT:
-                        value = ((JavascriptExecutor) driver).executeScript(
-                                "arguments[0].arguments[1];",
-                                element, attributename).toString();
-                        break;
-                    default:
-                        break;
-                }
+                WebElement element = BrowserUtils.getElement(driver, search, type);
+                value = ((JavascriptExecutor) driver).executeScript(
+                        "return arguments[0].value;",
+                        element).toString();
                 values.put(search, new StringValue(value));
             }
 
