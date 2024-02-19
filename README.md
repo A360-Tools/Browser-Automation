@@ -1,10 +1,8 @@
 # Browser Automation Package
 
-This browser automation package is designed to simplify web automation tasks and enhance the capabilities of the [A2019-WebAutomationPackage](https://github.com/AutomationAnywhere/A2019-WebAutomationPackage-181743) for Automation Anywhere. It builds upon the existing package, adding new features and addressing common pain points encountered in web automation.
+This browser automation package is designed to simplify web automation tasks for Automation Anywhere.This package retains all the capabilities of the Selenium WebDriver. You can perform actions such as opening the browser, extracting data, inputting values, clicking elements, and working across iframes as needed for your automation tasks.
 
-In addition to the new features, this package retains all the capabilities of the Selenium WebDriver. You can perform actions such as opening the browser, extracting data, inputting values, clicking elements, and working across iframes as needed for your automation tasks.
-
-## Added Features
+## Highlights
 
 ### 1. Automatic Webdriver Management
 
