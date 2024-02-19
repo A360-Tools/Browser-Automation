@@ -10,24 +10,26 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BrowserConnection implements CloseableSessionObject {
-
+    private static final String EMPTY_STRING = "";
     private final String library;
-    private final String browser;
     private WebDriver driver;
 
     public BrowserConnection(String profilePath, String browser, Boolean headless,
-                             String libraryCode, String driverPath, List<String> stringArguments) throws Exception {
-        this.library = (libraryCode == null) ? "" : libraryCode;
+                             String libraryCode, String driverPath, List<String> stringArguments){
 
-        List<String> arguments = new ArrayList<>();
+        this.library = Optional.ofNullable(libraryCode).orElse(EMPTY_STRING);
+        profilePath = Optional.ofNullable(profilePath).orElse(EMPTY_STRING);
+        stringArguments = Optional.ofNullable(stringArguments).orElse(Collections.emptyList());
+        headless = Optional.ofNullable(headless).orElse(Boolean.FALSE);
+
+        List<String> arguments = new ArrayList<>(stringArguments);
+        //add default arguments
         arguments.add("--disable-gpu");
         arguments.add("--ignore-certificate-errors");
         arguments.add("--disable-blink-features=AutomationControlled");
-        arguments.addAll(stringArguments);
         if (headless)
             arguments.add("--headless=new");
         if (!profilePath.isBlank()) {
@@ -36,12 +38,10 @@ public class BrowserConnection implements CloseableSessionObject {
 
         switch (browser.toLowerCase()) {
             case "chrome":
-                this.browser = "chrome";
                 ChromeOptions chromeOptions = getChromeOptions(arguments);
                 setupChromeDriver(driverPath, chromeOptions);
                 break;
             case "edge":
-                this.browser = "edge";
                 EdgeOptions edgeOptions = getEdgeOptions(arguments);
                 setupEdgeDriver(driverPath, edgeOptions);
                 break;
@@ -77,16 +77,26 @@ public class BrowserConnection implements CloseableSessionObject {
     private ChromeOptions getChromeOptions(List<String> arguments) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments(arguments);
+        Map<String, Object> prefs = new HashMap<>();
+        prefs.put("credentials_enable_service", false);
+        prefs.put("profile.password_manager_enabled", false);
+        options.setExperimentalOption("prefs", prefs);
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        options.setExperimentalOption("useAutomationExtension", false);
         return options;
     }
 
     private EdgeOptions getEdgeOptions(List<String> arguments) {
         EdgeOptions options = new EdgeOptions();
         options.addArguments(arguments);
+        Map<String, Object> prefs = new HashMap<>();
+        prefs.put("credentials_enable_service", false);
+        prefs.put("profile.password_manager_enabled", false);
+        options.setExperimentalOption("prefs", prefs);
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
+        options.setExperimentalOption("useAutomationExtension", false);
         return options;
     }
 

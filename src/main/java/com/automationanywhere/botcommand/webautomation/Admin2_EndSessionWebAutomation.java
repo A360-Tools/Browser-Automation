@@ -5,9 +5,8 @@ import com.automationanywhere.botcommand.utils.BrowserConnection;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
+import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
-
-import static com.automationanywhere.commandsdk.model.AttributeType.SESSION;
 
 
 @BotCommand
@@ -18,10 +17,10 @@ import static com.automationanywhere.commandsdk.model.AttributeType.SESSION;
         icon = "pkg.svg",
         node_label = "{{session}}")
 public class Admin2_EndSessionWebAutomation {
-
     @Execute
     public void end(
-            @Idx(index = "1", type = SESSION) @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Idx(index = "1", type = AttributeType.SESSION)
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session) {

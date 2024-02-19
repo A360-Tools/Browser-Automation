@@ -4,12 +4,12 @@ package com.automationanywhere.botcommand.webautomation;
 import com.automationanywhere.botcommand.data.impl.BooleanValue;
 import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.automationanywhere.botcommand.utils.BrowserConnection;
-import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
 
@@ -23,26 +23,26 @@ import org.openqa.selenium.WebDriver;
 public class isLoaded {
 
     @Execute
-    public BooleanValue action(
-            @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+    public static BooleanValue action(
+            @Idx(index = "1", type = AttributeType.SESSION)
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session
-    ) throws Exception {
-        Boolean isLoaded = false;
+    ) {
+        boolean isLoaded;
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            BrowserUtils utils = new BrowserUtils();
-            isLoaded = utils.isPageLoaded(driver);
+            isLoaded = ((JavascriptExecutor) driver).executeScript("return document.readyState").toString().equalsIgnoreCase(
+                    "complete");
         } catch (Exception e) {
             throw new BotCommandException("PAGEISLOADED : " + e.getMessage());
         }
         return new BooleanValue(isLoaded);
-
-
     }
 
 }

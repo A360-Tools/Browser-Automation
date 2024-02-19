@@ -2,7 +2,6 @@ package com.automationanywhere.botcommand.webautomation;
 
 import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.automationanywhere.botcommand.utils.BrowserConnection;
-import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
@@ -10,7 +9,7 @@ import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.WebDriver;
 
-import static com.automationanywhere.commandsdk.model.DataType.STRING;
+import java.util.regex.Pattern;
 
 @BotCommand
 @CommandPkg(label = "Select Window", name = "selectwindow",
@@ -22,9 +21,10 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
 public class SelectWindow {
 
     @Execute
-    public void action(
+    public static void action(
             @Idx(index = "1", type = AttributeType.SESSION)
-            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -32,26 +32,40 @@ public class SelectWindow {
             @Idx(index = "2", type = AttributeType.RADIO, options = {
                     @Idx.Option(index = "2.1", pkg = @Pkg(label = "By Handle", value = "byHandle")),
                     @Idx.Option(index = "2.2", pkg = @Pkg(label = "By Title(Regex match)", value = "byTitle"))})
-            @Pkg(label = "Selection Method", default_value = "byHandle", default_value_type = STRING)
+            @Pkg(label = "Selection Method", default_value = "byHandle", default_value_type = DataType.STRING)
             @NotEmpty String selectionMethod,
 
             @Idx(index = "3", type = AttributeType.TEXT)
-            @Pkg(label = "Window Handle or Regex to match title", default_value_type = STRING)
+            @Pkg(label = "Window Handle or Regex to match title", default_value_type = DataType.STRING)
             @NotEmpty String handleOrTitle
-    ) throws Exception {
+    ) {
 
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            BrowserUtils utils = new BrowserUtils();
             switch (selectionMethod) {
                 case "byHandle":
-                    utils.switchToWindow(driver, handleOrTitle);
+                    driver.switchTo().window(handleOrTitle);
                     break;
                 case "byTitle":
-                    utils.switchToWindowWithTitleRegex(driver, handleOrTitle);
+                    String originalWindow = driver.getWindowHandle();
+                    Pattern pattern = Pattern.compile(handleOrTitle);
+                    boolean matchFound = false;
+
+                    for (String handle : driver.getWindowHandles()) {
+                        driver.switchTo().window(handle);
+                        if (pattern.matcher(driver.getTitle()).find()) {
+                            matchFound = true;
+                            break; //
+                        }
+                    }
+
+                    if (!matchFound) {
+                        driver.switchTo().window(originalWindow);
+                        throw new BotCommandException("No window with title matching regex '" + handleOrTitle + "' found");
+                    }
                     break;
                 default:
                     throw new BotCommandException("Invalid selection method");

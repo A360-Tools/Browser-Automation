@@ -4,15 +4,16 @@ package com.automationanywhere.botcommand.webautomation;
 import com.automationanywhere.botcommand.data.impl.BooleanValue;
 import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.automationanywhere.botcommand.utils.BrowserConnection;
-import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static com.automationanywhere.commandsdk.model.AttributeType.SESSION;
+import java.time.Duration;
 
 @BotCommand
 @CommandPkg(label = "Wait Page Loaded", name = "pageloaded",
@@ -24,24 +25,36 @@ import static com.automationanywhere.commandsdk.model.AttributeType.SESSION;
 public class WaitLoadedPage {
 
     @Execute
-    public BooleanValue action(
+    public static BooleanValue action(
 
-            @Idx(index = "1", type = SESSION) @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Idx(index = "1", type = AttributeType.SESSION)
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
+
             @Idx(index = "2", type = AttributeType.NUMBER)
             @Pkg(label = "Timeout (Seconds)", default_value_type = DataType.NUMBER, default_value = "10")
             @NotEmpty Number timeout
-    ) throws Exception {
+    ) {
 
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            BrowserUtils utils = new BrowserUtils();
-            Boolean isLoaded = utils.waitUntilPageLoaded(driver, timeout.intValue());
+
+            // Wait for the page to load within the specified timeout
+            new WebDriverWait(driver, Duration.ofSeconds(timeout.intValue()))
+                    .until(webDriver -> ((JavascriptExecutor) webDriver)
+                            .executeScript("return document.readyState")
+                            .toString().equals("complete"));
+
+            // After waiting, check if the page is really loaded
+            boolean isLoaded = ((JavascriptExecutor) driver)
+                    .executeScript("return document.readyState")
+                    .toString().equals("complete");
+
             return new BooleanValue(isLoaded);
         } catch (Exception e) {
             throw new BotCommandException("WAITPAGE : " + e.getMessage());

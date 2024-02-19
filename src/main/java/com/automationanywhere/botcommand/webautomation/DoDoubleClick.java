@@ -13,20 +13,19 @@ import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
+import org.openqa.selenium.interactions.Actions;
 
 @BotCommand
-@CommandPkg(label = "Click", name = "clickelement",
-        description = "Click on an Element",
+@CommandPkg(label = "Double Click", name = "dblclickelement",
+        description = "Double Click on an Element",
         node_label = "on {{search}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Click", text_color = "#2F4F4F", background_color = "#2F4F4F")
 
 
-public class DoClick {
+public class DoDoubleClick {
 
     @Execute
     public static void action(
-            @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session",
-                    description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -60,7 +59,7 @@ public class DoClick {
             @SelectModes
             @NotEmpty String interactionMode
 
-    ){
+    ) {
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
@@ -73,12 +72,12 @@ public class DoClick {
             WebElement element = BrowserUtils.getElement(driver, jsPath, type);
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
-                    element.click();
+                    Actions actions = new Actions(driver);
+                    actions.doubleClick(element).perform();
                     break;
                 case BrowserUtils.MODE_JAVASCRIPT:
-                    ((JavascriptExecutor) driver).executeScript(
-                            "arguments[0].click();",
-                            element);
+                    ((JavascriptExecutor) driver).executeScript("var evt = new MouseEvent('dblclick', { bubbles: true, cancelable: true, view: window });" +
+                            "arguments[0].dispatchEvent(evt);", element);
                     break;
                 default:
                     break;

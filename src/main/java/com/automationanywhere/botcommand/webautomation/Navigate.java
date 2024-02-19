@@ -3,16 +3,12 @@ package com.automationanywhere.botcommand.webautomation;
 
 import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.automationanywhere.botcommand.utils.BrowserConnection;
-import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.WebDriver;
-
-import static com.automationanywhere.commandsdk.model.DataType.STRING;
-
 
 @BotCommand
 @CommandPkg(label = "Navigate Page", name = "navigatepage",
@@ -23,8 +19,10 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
 public class Navigate {
 
     @Execute
-    public void action(
-            @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+    public static void action(
+            @Idx(index = "1", type = AttributeType.SESSION)
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -33,26 +31,24 @@ public class Navigate {
                     @Idx.Option(index = "2.2", pkg = @Pkg(label = "Forward", value = "forward")),
                     @Idx.Option(index = "2.3", pkg = @Pkg(label = "Refresh", value = "refresh"))
             })
-            @Pkg(label = "Navigation Type", default_value = "newtab", default_value_type = STRING) @NotEmpty String navigateOption
-    ) throws Exception {
+            @Pkg(label = "Navigation Type", default_value = "newtab", default_value_type = DataType.STRING)
+            @NotEmpty String navigateOption
+    ) {
 
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            BrowserUtils utils = new BrowserUtils();
-
             switch (navigateOption) {
-
                 case "back":
-                    utils.navigateBack(driver);
+                    driver.navigate().back();
                     break;
                 case "forward":
-                    utils.navigateForward(driver);
+                    driver.navigate().forward();
                     break;
                 case "refresh":
-                    utils.refreshPage(driver);
+                    driver.navigate().refresh();
                     break;
                 default:
                     throw new BotCommandException("Invalid selection method");

@@ -10,11 +10,10 @@ import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import com.automationanywhere.commandsdk.model.ReturnSettingsType;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.automationanywhere.commandsdk.model.DataType.SESSION;
-import static com.automationanywhere.commandsdk.model.DataType.STRING;
 
 
 @BotCommand
@@ -23,7 +22,7 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
         icon = "pkg.svg", node_label = "{{returnTo}}",
         return_label = "Browser Automation session",
         return_settings = {ReturnSettingsType.SESSION_TARGET},
-        return_type = SESSION,
+        return_type = DataType.SESSION,
         return_name = "Default",
         return_required = true)
 public class Admin1_StartSessionWebAutomation {
@@ -33,7 +32,7 @@ public class Admin1_StartSessionWebAutomation {
                     @Idx.Option(index = "1.1", pkg = @Pkg(label = "Chrome", value = "Chrome")),
                     @Idx.Option(index = "1.2", pkg = @Pkg(label = "Edge", value = "Edge")),
             })
-            @Pkg(label = "Browser", default_value = "Chrome", default_value_type = STRING)
+            @Pkg(label = "Browser", default_value = "Chrome", default_value_type = DataType.STRING)
             @NotEmpty String browser,
 
             @Idx(index = "2", type = AttributeType.BOOLEAN)
@@ -53,23 +52,24 @@ public class Admin1_StartSessionWebAutomation {
             String driverpath,
 
             @Idx(index = "6", type = AttributeType.LIST)
-            @Pkg(label = "List of launch option arguments")
+            @Pkg(label = "List of launch option arguments", description = "Eg. Following are added by default " +
+                    "--disable-gpu , --ignore-certificate-errors, --disable-blink-features=AutomationControlled")
             @ListType(DataType.STRING)
             List<Value> arguments
+            //TODO: add preference map option
     ) throws Exception {
 
-        profilepath = (profilepath == null) ? "" : profilepath;
+        List<String> stringArguments = Optional.ofNullable(arguments)
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(Value::get)
+                .map(Object::toString)
+                .collect(Collectors.toList());
 
-        if (arguments == null)
-            arguments = List.of();
-
-        List<String> stringArguments =
-                arguments.stream().map(argument -> argument.get().toString()).collect(Collectors.toList());
         BrowserConnection connection = new BrowserConnection(profilepath, browser, headless, library, driverpath,
                 stringArguments);
 
-        return SessionValue
-                .builder()
+        return SessionValue.builder()
                 .withSessionObject(connection)
                 .build();
     }

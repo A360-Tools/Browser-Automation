@@ -13,25 +13,26 @@ import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-
+import org.openqa.selenium.interactions.Actions;
 
 @BotCommand
-@CommandPkg(label = "Click", name = "clickelement",
-        description = "Click on an Element",
+@CommandPkg(label = "Right Click", name = "rightclickelement",
+        description = "Double Click on an Element",
         node_label = "on {{search}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Click", text_color = "#2F4F4F", background_color = "#2F4F4F")
 
 
-public class DoClick {
+public class DoRightClick {
 
     @Execute
     public static void action(
-            @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session",
-                    description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Idx(index = "1", type = AttributeType.SESSION)
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
 
-            @Idx(index = "2", type = AttributeType.TEXTAREA) @Pkg(label = "Selector value", description = "xpath,css," +
+            @Idx(index = "2", type = AttributeType.TEXTAREA)
+            @Pkg(label = "Selector value", description = "xpath,css," +
                     " or id etc. based on search type", default_value_type = DataType.STRING)
             @NotEmpty String search,
 
@@ -44,11 +45,13 @@ public class DoClick {
             @Pkg(label = "Search Type", default_value = BrowserUtils.CSS, default_value_type = DataType.STRING)
             @NotEmpty String type,
 
-            @Idx(index = "4", type = AttributeType.NUMBER) @Pkg(label = "Timeout (Seconds)", description = "No wait " +
+            @Idx(index = "4", type = AttributeType.NUMBER)
+            @Pkg(label = "Timeout (Seconds)", description = "No wait " +
                     "if 0", default_value_type = DataType.NUMBER, default_value = "0")
             @NotEmpty Number timeout,
 
-            @Idx(index = "5", type = AttributeType.TEXT) @Pkg(label = "Wait for Attribute Value", default_value_type
+            @Idx(index = "5", type = AttributeType.TEXT)
+            @Pkg(label = "Wait for Attribute Value", default_value_type
                     = DataType.STRING, default_value = "className")
             @NotEmpty String attribute,
 
@@ -59,8 +62,7 @@ public class DoClick {
             @Pkg(label = "Input Type", default_value = BrowserUtils.MODE_SIMULATE, default_value_type = DataType.STRING)
             @SelectModes
             @NotEmpty String interactionMode
-
-    ){
+    ) {
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
@@ -73,12 +75,12 @@ public class DoClick {
             WebElement element = BrowserUtils.getElement(driver, jsPath, type);
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
-                    element.click();
+                    Actions actions = new Actions(driver);
+                    actions.contextClick(element).perform();
                     break;
                 case BrowserUtils.MODE_JAVASCRIPT:
-                    ((JavascriptExecutor) driver).executeScript(
-                            "arguments[0].click();",
-                            element);
+                    ((JavascriptExecutor) driver).executeScript("var evt = new MouseEvent('contextmenu', { bubbles: true, cancelable: true, view: window });" +
+                            "arguments[0].dispatchEvent(evt);", element);
                     break;
                 default:
                     break;
