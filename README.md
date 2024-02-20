@@ -2,8 +2,10 @@
 
 This browser automation package is designed to simplify web automation tasks for Automation Anywhere.This package retains all the capabilities of the Selenium WebDriver. You can perform actions such as opening the browser, extracting data, inputting values, clicking elements, and working across iframes as needed for your automation tasks.
 
-## Highlights
+## Demo
+![Animation](https://github.com/A360-Tools/Browser-Automation/assets/82057278/ceef22da-fc4d-4ff5-81d4-b202887f9afa)
 
+## Highlights
 ### 1. Automatic Webdriver Management
 
 One of the key enhancements of this package is its ability to automatically detect the browser version being used and download the appropriate webdriver. This eliminates the need for manual configuration and ensures seamless compatibility across various browser versions.
