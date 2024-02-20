@@ -17,8 +17,8 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
 
 
 @BotCommand
-@CommandPkg(label = "Hover", name = "movetoelement",
-        description = "Hover over an Element",
+@CommandPkg(label = "Move To", name = "movetoelement",
+        description = "Move mouse to center of an element",
         node_label = "element {{search}} for session {{session}}", icon = "pkg.svg", comment = true,
         group_label = "Click", text_color = "#2F4F4F", background_color = "#2F4F4F")
 
@@ -55,13 +55,11 @@ public class MoveTo {
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
-
             WebDriver driver = session.getDriver();
-            String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, search, type);
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            if (element == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+            }
             Actions actions = new Actions(driver);
             actions.moveToElement(element).perform();
 

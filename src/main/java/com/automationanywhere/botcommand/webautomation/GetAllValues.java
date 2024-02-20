@@ -9,7 +9,6 @@ import com.automationanywhere.botcommand.utils.BrowserConnection;
 import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
-import com.automationanywhere.commandsdk.annotations.rules.SelectModes;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;

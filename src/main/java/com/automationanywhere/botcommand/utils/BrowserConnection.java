@@ -2,7 +2,6 @@ package com.automationanywhere.botcommand.utils;
 
 import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.automationanywhere.toolchain.runtime.session.CloseableSessionObject;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -18,7 +17,7 @@ public class BrowserConnection implements CloseableSessionObject {
     private WebDriver driver;
 
     public BrowserConnection(String profilePath, String browser, Boolean headless,
-                             String libraryCode, String driverPath, List<String> stringArguments){
+                             String libraryCode, String driverPath, List<String> stringArguments) {
 
         this.library = Optional.ofNullable(libraryCode).orElse(EMPTY_STRING);
         profilePath = Optional.ofNullable(profilePath).orElse(EMPTY_STRING);
@@ -57,31 +56,20 @@ public class BrowserConnection implements CloseableSessionObject {
     private void setupChromeDriver(String driverPath, ChromeOptions options) {
         if (driverPath != null && !driverPath.isBlank()) {
             System.setProperty("webdriver.chrome.driver", driverPath);
-            this.driver = new ChromeDriver(options);
-        } else {
-            // WebDriverManager.chromedriver().clearDriverCache().setup();
-            this.driver = WebDriverManager.chromedriver().capabilities(options).create();
         }
+        this.driver = new ChromeDriver(options);
     }
 
     private void setupEdgeDriver(String driverPath, EdgeOptions options) {
         if (driverPath != null && !driverPath.isBlank()) {
             System.setProperty("webdriver.edge.driver", driverPath);
-            this.driver = new EdgeDriver(options);
-        } else {
-           // WebDriverManager.edgedriver().clearDriverCache().setup();
-            this.driver = WebDriverManager.edgedriver().capabilities(options).create();
         }
+        this.driver = new EdgeDriver(options);
     }
 
     private ChromeOptions getChromeOptions(List<String> arguments) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments(arguments);
-        Map<String, Object> prefs = new HashMap<>();
-        prefs.put("credentials_enable_service", false);
-        prefs.put("profile.password_manager_enabled", false);
-        options.setExperimentalOption("prefs", prefs);
-        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         options.setExperimentalOption("useAutomationExtension", false);
         return options;
@@ -90,10 +78,6 @@ public class BrowserConnection implements CloseableSessionObject {
     private EdgeOptions getEdgeOptions(List<String> arguments) {
         EdgeOptions options = new EdgeOptions();
         options.addArguments(arguments);
-        Map<String, Object> prefs = new HashMap<>();
-        prefs.put("credentials_enable_service", false);
-        prefs.put("profile.password_manager_enabled", false);
-        options.setExperimentalOption("prefs", prefs);
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         options.setExperimentalOption("useAutomationExtension", false);
@@ -102,10 +86,6 @@ public class BrowserConnection implements CloseableSessionObject {
 
     public WebDriver getDriver() {
         return this.driver;
-    }
-
-    public void setDriver(WebDriver driver) {
-        this.driver = driver;
     }
 
     public String getLibrary() {

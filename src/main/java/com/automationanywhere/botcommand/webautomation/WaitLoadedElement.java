@@ -11,6 +11,7 @@ import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 @BotCommand
 @CommandPkg(label = "Wait Element Loaded", name = "elementloaded",
@@ -56,9 +57,11 @@ public class WaitLoadedElement {
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
-            return new BooleanValue(elementLoaded);
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            if (element == null) {
+                return new BooleanValue(false);
+            }
+            return new BooleanValue(true);
         } catch (Exception e) {
             throw new BotCommandException("WAITELEMENT " + search + " " + type + " : " + e.getMessage());
         }

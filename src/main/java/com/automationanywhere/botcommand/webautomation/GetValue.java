@@ -7,7 +7,6 @@ import com.automationanywhere.botcommand.utils.BrowserConnection;
 import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
-import com.automationanywhere.commandsdk.annotations.rules.SelectModes;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
@@ -58,11 +57,10 @@ public class GetValue {
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, search, type);
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            if (element == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+            }
 
             value = ((JavascriptExecutor) driver).executeScript(
                     "return arguments[0].value;",

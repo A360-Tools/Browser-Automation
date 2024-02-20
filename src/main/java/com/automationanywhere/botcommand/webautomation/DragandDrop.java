@@ -33,12 +33,12 @@ public class DragandDrop {
             @Idx(index = "2", type = AttributeType.TEXTAREA)
             @Pkg(label = "From Element", description = "xpath,css," +
                     " or id etc. based on search type", default_value_type = DataType.STRING)
-            @NotEmpty String fromelement,
+            @NotEmpty String fromSelector,
 
             @Idx(index = "3", type = AttributeType.TEXTAREA)
             @Pkg(label = "To Element", description = "xpath,css," +
                     " or id etc. based on search type", default_value_type = DataType.STRING)
-            @NotEmpty String toelement,
+            @NotEmpty String toSelector,
 
             @Idx(index = "4", type = AttributeType.SELECT, options = {
                     @Idx.Option(index = "4.1", pkg = @Pkg(label = "Search by Element XPath", value = BrowserUtils.XPATH)),
@@ -63,24 +63,26 @@ public class DragandDrop {
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
+            WebElement fromElement = BrowserUtils.waitForElementWithAttribute(driver, fromSelector, type, attribute,
+                    timeout.intValue());
+            if (fromElement == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector:" +
+                        " " + fromSelector + ", attribute: " + attribute);
+            }
 
-            String jsFromPath = BrowserUtils.getJavaScriptPath(fromelement, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsFromPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + fromelement);
+            WebElement toElement = BrowserUtils.waitForElementWithAttribute(driver, toSelector, type, attribute,
+                    timeout.intValue());
+            if (toElement == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector:" +
+                        " " + toSelector + ", attribute: " + attribute);
+            }
 
-            String jsToPath = BrowserUtils.getJavaScriptPath(toelement, type);
-            elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsToPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + toelement);
-
-            WebElement fromElement = BrowserUtils.getElement(driver, fromelement, type);
-            WebElement toElement = BrowserUtils.getElement(driver, toelement, type);
             Actions actions = new Actions(driver);
             actions.dragAndDrop(fromElement, toElement).perform();
 
         } catch (Exception e) {
-            throw new BotCommandException("DRAGNDROP " + fromelement + " " + toelement + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("DRAGNDROP failed from " + fromSelector + " to " + toSelector + " " + type +
+                    " : " + e.getMessage());
         }
     }
 

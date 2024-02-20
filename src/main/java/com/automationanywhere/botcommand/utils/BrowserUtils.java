@@ -1,13 +1,8 @@
 package com.automationanywhere.botcommand.utils;
 
 
-import com.automationanywhere.botcommand.exception.BotCommandException;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.FluentWait;
 
 import java.time.Duration;
 
@@ -22,7 +17,6 @@ public class BrowserUtils {
     public static final String JS = "JS";
     public static final String MODE_SIMULATE = "SIMULATE";
     public static final String MODE_JAVASCRIPT = "JAVASCRIPT";
-    public static final String Click = "Click";
 
     public BrowserUtils() {
 
@@ -54,42 +48,19 @@ public class BrowserUtils {
         return element;
     }
 
-    public static boolean waitForElementWithAttribute(WebDriver driver, String js, String attribute,
-                                                      int timeoutInSeconds) {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds), Duration.ofMillis(200));
+    public static WebElement waitForElementWithAttribute(WebDriver driver, String search, String type, String attribute, int timeoutInSeconds) {
+        FluentWait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(timeoutInSeconds))
+                .pollingEvery(Duration.ofMillis(50))
+                .ignoring(NoSuchElementException.class);
 
-            return wait.until((ExpectedCondition<Boolean>) webDriver -> {
-                Object attributeValue;
-                try {
-                    JavascriptExecutor jsExecutor = (JavascriptExecutor) webDriver;
-                    assert jsExecutor != null;
-                    attributeValue = jsExecutor.executeScript("return " + js + "." + attribute);
-                } catch (Exception e) {
-                    attributeValue = null;
-                }
-                return attributeValue != null;
-            });
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    public static String getJavaScriptPath(String search, String type) {
-        switch (type) {
-            case ID:
-                return "document.getElementById(`" + search + "`)";
-            case CSS:
-                return "document.querySelector(`" + search + "`)";
-            case XPATH:
-                return "document.evaluate(`" + search + "`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue";
-            case TAG:
-                return "document.getElementsByTagName(`" + search + "`)[0]";
-            case JS:
-                return search;
-            default:
-                throw new BotCommandException("Unsupported search type: " + type);
-        }
+        return wait.until(webDriver -> {
+            WebElement element = getElement(driver, search, type);
+            if (element != null && element.getAttribute(attribute) != null) {
+                return element;
+            }
+            return null;
+        });
     }
 }
     

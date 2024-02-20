@@ -67,11 +67,10 @@ public class DoFocus {
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, search, type);
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            if (element == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+            }
             switch (interactionMode) {
                 case BrowserUtils.MODE_SIMULATE:
                     element.sendKeys(Keys.SHIFT);
@@ -79,7 +78,7 @@ public class DoFocus {
                 case BrowserUtils.MODE_JAVASCRIPT:
                     ((JavascriptExecutor) driver).executeScript(
                             "window.focus();" +
-                            "arguments[0].focus();"
+                                    "arguments[0].focus();"
                             , element);
                     break;
                 default:

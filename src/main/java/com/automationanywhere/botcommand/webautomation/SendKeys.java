@@ -5,7 +5,10 @@ import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.automationanywhere.botcommand.utils.BrowserConnection;
 import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.commandsdk.annotations.*;
-import com.automationanywhere.commandsdk.annotations.rules.*;
+import com.automationanywhere.commandsdk.annotations.rules.CredentialAllowPassword;
+import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
+import com.automationanywhere.commandsdk.annotations.rules.SelectModes;
+import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import com.automationanywhere.core.security.SecureString;
@@ -14,6 +17,10 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
 @BotCommand
 @CommandPkg(label = "Send Key Strokes", name = "sendkeys",
         description = "Send Keys to an Element",
@@ -21,6 +28,59 @@ import org.openqa.selenium.interactions.Actions;
 
 
 public class SendKeys {
+    private static final Map<String, Consumer<Actions>> specialKeys = new HashMap<>();
+
+    static {
+        specialKeys.put("CTRL DOWN", (a) -> a.keyDown(Keys.CONTROL));
+        specialKeys.put("CTRL UP", (a) -> a.keyUp(Keys.CONTROL));
+        specialKeys.put("SHIFT DOWN", (a) -> a.keyDown(Keys.SHIFT));
+        specialKeys.put("SHIFT UP", (a) -> a.keyUp(Keys.SHIFT));
+        specialKeys.put("ALT DOWN", (a) -> a.keyDown(Keys.ALT));
+        specialKeys.put("ALT UP", (a) -> a.keyUp(Keys.ALT));
+        specialKeys.put("ALT-GR DOWN", (a) -> a.keyDown(Keys.CONTROL).keyDown(Keys.ALT));
+        specialKeys.put("ALT-GR UP", (a) -> a.keyUp(Keys.ALT).keyUp(Keys.CONTROL));
+        specialKeys.put("ENTER", (a) -> a.sendKeys(Keys.ENTER));
+        specialKeys.put("RETURN", (a) -> a.sendKeys(Keys.ENTER));
+        specialKeys.put("NUM-ENTER", (a) -> a.sendKeys(Keys.ENTER));
+        specialKeys.put("BACKSPACE", (a) -> a.sendKeys(Keys.BACK_SPACE));
+        specialKeys.put("TAB", (a) -> a.sendKeys(Keys.TAB));
+        specialKeys.put("ESCAPE", (a) -> a.sendKeys(Keys.ESCAPE));
+        specialKeys.put("ESC", (a) -> a.sendKeys(Keys.ESCAPE));
+        specialKeys.put("PAGE UP", (a) -> a.sendKeys(Keys.PAGE_UP));
+        specialKeys.put("PAGE DOWN", (a) -> a.sendKeys(Keys.PAGE_DOWN));
+        specialKeys.put("HOME", (a) -> a.sendKeys(Keys.HOME));
+        specialKeys.put("LEFT ARROW", (a) -> a.sendKeys(Keys.ARROW_LEFT));
+        specialKeys.put("UP ARROW", (a) -> a.sendKeys(Keys.ARROW_UP));
+        specialKeys.put("RIGHT ARROW", (a) -> a.sendKeys(Keys.ARROW_RIGHT));
+        specialKeys.put("DOWN ARROW", (a) -> a.sendKeys(Keys.ARROW_DOWN));
+        specialKeys.put("DELETE", (a) -> a.sendKeys(Keys.DELETE));
+        specialKeys.put("INSERT", (a) -> a.sendKeys(Keys.INSERT));
+        specialKeys.put("DOLLAR", (a) -> a.sendKeys("$"));
+        specialKeys.put("PAUSE", (a) -> a.sendKeys(Keys.PAUSE));
+        specialKeys.put("END", (a) -> a.sendKeys(Keys.END));
+        // Handle function keys F1 to F12 dynamically
+        for (int i = 1; i <= 12; i++) {
+            int currentKeyIndex = i;
+            specialKeys.put("F" + i, (a) -> a.sendKeys(Keys.valueOf("F" + currentKeyIndex)));
+        }
+    }
+
+    public static void handleSpecialKey(Actions action, String key, Boolean capsLockPressed) {
+        if ("CAPS-LOCK".equals(key)) {
+            capsLockPressed = !capsLockPressed;
+            if (capsLockPressed) {
+                action.keyDown(Keys.SHIFT); // Simulate Caps Lock being on by holding Shift
+            } else {
+                action.keyUp(Keys.SHIFT); // Release Shift when Caps Lock is toggled off
+            }
+        } else if (specialKeys.containsKey(key)) {
+            specialKeys.get(key).accept(action);
+        } else {
+            // Unsupported special keys treated as normal text
+            action.sendKeys("[" + key + "]");
+        }
+    }
+
     @Execute
     public static void action(
             @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
@@ -57,7 +117,6 @@ public class SendKeys {
             @Pkg(label = "Credential", default_value_type =
                     DataType.STRING)
             @NotEmpty
-            @CredentialOnly
             @CredentialAllowPassword
             SecureString keyscredential,
 
@@ -76,7 +135,6 @@ public class SendKeys {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
 
-            WebDriver driver = session.getDriver();
             if (inputtype.equals("KEYS")) {
                 keyString = keys;
             } else {
@@ -84,11 +142,11 @@ public class SendKeys {
             }
             keyString = keyString.replace("\r\n", "[ENTER]").replace("\n", "[ENTER]");
 
-            String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, search, type);
+            WebDriver driver = session.getDriver();
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            if (element == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+            }
 
             Actions action = new Actions(driver);
             boolean capslockPressed = false;
@@ -102,14 +160,12 @@ public class SendKeys {
                     if (endIndex != -1) {
                         String key = keyString.substring(i + 1, endIndex);
                         handleSpecialKey(action, key, capslockPressed);
-                        if (key.equals("CAPS-LOCK"))
-                            capslockPressed = !capslockPressed;
                         i = endIndex + 1; // Advance to the character after the closing ']'
                     } else {
                         i++; // Move to the next character
                     }
                 } else {
-                    action.sendKeys(Character.toString(character));
+                    action.sendKeys(String.valueOf(character));
                     i++;
                 }
             }
@@ -118,112 +174,5 @@ public class SendKeys {
         } catch (Exception e) {
             throw new BotCommandException("SENDKEYS " + search + " " + type + " : " + e.getMessage());
         }
-    }
-
-    private static void handleSpecialKey(Actions action, String key, boolean capslockPressed) {
-        switch (key) {
-            case "CTRL DOWN":
-                action.keyDown(Keys.CONTROL);
-                break;
-            case "CTRL UP":
-                action.keyUp(Keys.CONTROL);
-                break;
-            case "SHIFT DOWN":
-                action.keyDown(Keys.SHIFT);
-                break;
-            case "SHIFT UP":
-                action.keyUp(Keys.SHIFT);
-                break;
-            case "ALT DOWN":
-                action.keyDown(Keys.ALT);
-                break;
-            case "ALT UP":
-                action.keyUp(Keys.ALT);
-                break;
-            case "ALT-GR DOWN":
-                action.keyDown(Keys.CONTROL).keyDown(Keys.ALT);
-                break;
-            case "ALT-GR UP":
-                action.keyUp(Keys.ALT).keyUp(Keys.CONTROL);
-                break;
-            case "PAGE DOWN":
-                action.sendKeys(Keys.PAGE_DOWN);
-                break;
-            case "PAGE UP":
-                action.sendKeys(Keys.PAGE_UP);
-                break;
-            case "ENTER":
-            case "RETURN":
-            case "NUM-ENTER":
-                action.sendKeys(Keys.ENTER);
-                break;
-            case "BACKSPACE":
-                action.sendKeys(Keys.BACK_SPACE);
-                break;
-            case "INSERT":
-                action.sendKeys(Keys.INSERT);
-                break;
-            case "DELETE":
-                action.sendKeys(Keys.DELETE);
-                break;
-            case "HOME":
-                action.sendKeys(Keys.HOME);
-                break;
-            case "PAUSE":
-                action.sendKeys(Keys.PAUSE);
-                break;
-            case "DOLLAR":
-                action.sendKeys("$");
-                break;
-            case "TAB":
-                action.sendKeys(Keys.TAB);
-                break;
-            case "END":
-                action.sendKeys(Keys.END);
-                break;
-            case "LEFT-ARROW":
-                action.sendKeys(Keys.ARROW_LEFT);
-                break;
-            case "RIGHT-ARROW":
-                action.sendKeys(Keys.ARROW_RIGHT);
-                break;
-            case "UP-ARROW":
-                action.sendKeys(Keys.ARROW_UP);
-                break;
-            case "DOWN-ARROW":
-                action.sendKeys(Keys.ARROW_DOWN);
-                break;
-            case "ESC":
-                action.sendKeys(Keys.ESCAPE);
-                break;
-            case "CAPS-LOCK":
-                if (!capslockPressed) {
-                    action.keyDown(Keys.SHIFT);
-                } else {
-                    action.keyUp(Keys.SHIFT);
-                }
-                break;
-            case "F1":
-            case "F2":
-            case "F3":
-            case "F4":
-            case "F5":
-            case "F6":
-            case "F7":
-            case "F8":
-            case "F9":
-            case "F10":
-            case "F11":
-            case "F12":
-                handleFunctionKey(action, key);
-                break;
-            default:
-                throw new BotCommandException("Unsupported Key: " + key);
-        }
-    }
-
-    private static void handleFunctionKey(Actions action, String key) {
-        int keyCode = Integer.parseInt(key.substring(1));
-        action.sendKeys(Keys.valueOf("F" + keyCode));
     }
 }

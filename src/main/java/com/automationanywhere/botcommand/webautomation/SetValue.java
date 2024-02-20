@@ -63,12 +63,10 @@ public class SetValue {
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-
-            String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, search, type);
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            if (element == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+            }
             ((JavascriptExecutor) driver).executeScript(
                     "var input = arguments[0];" + // Reference to your element
                             "input.value = arguments[1];" + // Set the value you want
@@ -77,7 +75,7 @@ public class SetValue {
                             "cancelable: true" + // Event can be canceled
                             "});" +
                             "input.dispatchEvent(event);", // Dispatch the 'change' event
-                    element,newvalue.getInsecureString());
+                    element, newvalue.getInsecureString());
         } catch (Exception e) {
             throw new BotCommandException("SETVALUE " + search + " " + type + " : " + e.getMessage());
         }

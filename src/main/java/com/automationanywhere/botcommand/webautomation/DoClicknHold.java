@@ -52,18 +52,17 @@ public class DoClicknHold {
                     = DataType.STRING, default_value = "className")
             @NotEmpty String attribute
 
-    ){
+    ) {
 
         try {
             if (session.isClosed())
                 throw new BotCommandException("Valid browser automation session not found");
 
             WebDriver driver = session.getDriver();
-            String jsPath = BrowserUtils.getJavaScriptPath(search, type);
-            boolean elementLoaded = BrowserUtils.waitForElementWithAttribute(driver, jsPath, attribute, timeout.intValue());
-            if (!elementLoaded)
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", and " + "selector: " + search);
-            WebElement element = BrowserUtils.getElement(driver, search, type);
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            if (element == null) {
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+            }
             Actions actions = new Actions(driver);
             actions.clickAndHold(element).perform();
 

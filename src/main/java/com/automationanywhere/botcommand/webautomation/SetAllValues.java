@@ -66,7 +66,7 @@ public class SetAllValues {
                                 "cancelable: true" + // Event can be canceled
                                 "});" +
                                 "input.dispatchEvent(event);", // Dispatch the 'change' event
-                        element,newvalues.get(i).get());
+                        element, newvalues.get(i).get());
                 i++;
             }
 
