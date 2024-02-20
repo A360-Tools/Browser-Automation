@@ -6,6 +6,8 @@ This browser automation package is designed to simplify web automation tasks for
 ![Animation](https://github.com/A360-Tools/Browser-Automation/assets/82057278/ceef22da-fc4d-4ff5-81d4-b202887f9afa)
 
 ## Highlights
+![activites](https://github.com/A360-Tools/Browser-Automation/assets/82057278/75554df4-902a-49db-a525-2cae2bd4ee0f)
+
 ### 1. Automatic Webdriver Management
 
 One of the key enhancements of this package is its ability to automatically detect the browser version being used and download the appropriate webdriver. This eliminates the need for manual configuration and ensures seamless compatibility across various browser versions.
