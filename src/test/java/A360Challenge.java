@@ -38,7 +38,8 @@ public class A360Challenge {
                 testProfilePath,
                 null,
                 null,
-                null
+                null,
+                Boolean.FALSE
         ).getSession();
     }
 

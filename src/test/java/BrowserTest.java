@@ -1,6 +1,5 @@
 import com.automationanywhere.botcommand.data.Value;
 import com.automationanywhere.botcommand.data.impl.StringValue;
-import com.automationanywhere.botcommand.data.impl.TableValue;
 import com.automationanywhere.botcommand.data.model.Schema;
 import com.automationanywhere.botcommand.data.model.table.Row;
 import com.automationanywhere.botcommand.data.model.table.Table;
@@ -17,7 +16,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class BrowserTest {
 
@@ -35,7 +33,8 @@ public class BrowserTest {
                 testProfilePath,
                 null,
                 null,
-                null
+                null,
+                Boolean.FALSE
         ).getSession();
     }
 
@@ -69,26 +68,27 @@ public class BrowserTest {
     }
 
     @Test
-    public void getTable(){
+    public void getTable() {
         OpenBrowser.action(browserConnection, "https://the-internet.herokuapp.com/tables", "maximized", null, null);
         Table table = GetTable.action(browserConnection, "table1", BrowserUtils.ID, 0, "className", "NORMALIZED_TEXT",
                 "INCLUDE_CHILDREN").get();
         List<Schema> schemaList = table.getSchema();
         List<Row> rows = table.getRows();
-        Assert.assertNotNull( schemaList,"Schema list should not be null");
-        Assert.assertFalse( schemaList.isEmpty(),"Schema list should not be empty");
+        Assert.assertNotNull(schemaList, "Schema list should not be null");
+        Assert.assertFalse(schemaList.isEmpty(), "Schema list should not be empty");
 
         for (Schema schema : schemaList) {
-            Assert.assertNotNull( schema.getName(),"Schema name should not be null");
-            Assert.assertFalse( schema.getName().isEmpty(),"Schema name should not be empty");
+            Assert.assertNotNull(schema.getName(), "Schema name should not be null");
+            Assert.assertFalse(schema.getName().isEmpty(), "Schema name should not be empty");
         }
 
         for (Row row : rows) {
-                for( Value value: row.getValues()){
-                    Assert.assertNotNull( value,"Value not be null");
+            for (Value value : row.getValues()) {
+                Assert.assertNotNull(value, "Value not be null");
             }
         }
     }
+
     @Test
     public void testAlertsAndClickModeJS() {
         OpenBrowser.action(browserConnection, "https://the-internet.herokuapp.com/javascript_alerts", "maximized", null, null);

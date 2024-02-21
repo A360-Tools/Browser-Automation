@@ -10,9 +10,7 @@ import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import com.automationanywhere.commandsdk.model.ReturnSettingsType;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -56,8 +54,12 @@ public class Admin1_StartSessionWebAutomation {
             @Pkg(label = "List of launch option arguments", description = "Eg. Following are added by default " +
                     "--disable-gpu , --ignore-certificate-errors, --disable-blink-features=AutomationControlled")
             @ListType(DataType.STRING)
-            List<Value> arguments
-            //TODO: add preference map option
+            List<Value> arguments,
+
+            @Idx(index = "7", type = AttributeType.CHECKBOX)
+            @Pkg(label = "Enable password manager")
+            Boolean enablePasswordManager
+
     ) {
 
         List<String> stringArguments = Optional.ofNullable(arguments)
@@ -67,8 +69,12 @@ public class Admin1_StartSessionWebAutomation {
                 .map(Object::toString)
                 .collect(Collectors.toList());
 
+        Map<String, Object> prefs = new HashMap<>();
+        prefs.put("credentials_enable_service", Optional.ofNullable(enablePasswordManager).orElse(Boolean.FALSE));
+        prefs.put("profile.password_manager_enabled", Optional.ofNullable(enablePasswordManager).orElse(Boolean.FALSE));
+
         BrowserConnection connection = new BrowserConnection(profilepath, browser, headless, library, driverpath,
-                stringArguments);
+                stringArguments, prefs);
 
         return SessionValue.builder()
                 .withSessionObject(connection)
