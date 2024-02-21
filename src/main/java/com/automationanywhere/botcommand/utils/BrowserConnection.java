@@ -70,6 +70,7 @@ public class BrowserConnection implements CloseableSessionObject {
     private ChromeOptions getChromeOptions(List<String> arguments) {
         ChromeOptions options = new ChromeOptions();
         options.addArguments(arguments);
+        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
         options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
         options.setExperimentalOption("useAutomationExtension", false);
         return options;

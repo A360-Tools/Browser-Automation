@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
         return_settings = {ReturnSettingsType.SESSION_TARGET},
         return_type = DataType.SESSION,
         return_name = "Default",
+        documentation_url = "https://github.com/A360-Tools/Browser-Automation",
         return_required = true)
 public class Admin1_StartSessionWebAutomation {
     @Execute
@@ -57,7 +58,7 @@ public class Admin1_StartSessionWebAutomation {
             @ListType(DataType.STRING)
             List<Value> arguments
             //TODO: add preference map option
-    ) throws Exception {
+    ) {
 
         List<String> stringArguments = Optional.ofNullable(arguments)
                 .orElse(Collections.emptyList())

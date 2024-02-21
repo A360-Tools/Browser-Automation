@@ -19,7 +19,7 @@ import static com.automationanywhere.commandsdk.model.DataType.STRING;
 
 
 @BotCommand
-@CommandPkg(label = "Scroll", name = "scrolltoelement",
+@CommandPkg(label = "Scroll To", name = "scrolltoelement",
         description = "Scroll to an element",
         node_label = "element {{search}} for session {{session}}", icon = "pkg.svg", comment = true,
         group_label = "Click", text_color = "#2F4F4F", background_color = "#2F4F4F")
