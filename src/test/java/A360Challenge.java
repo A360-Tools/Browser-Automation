@@ -120,7 +120,8 @@ public class A360Challenge {
 
         OpenBrowser.action(browserConnection, procurementURL, "maximized", null, null);
         String procurementHandle = GetCurrentWindow.action(browserConnection).get();
-        SetValue.action(browserConnection, "inputEmail", BrowserUtils.ID, new SecureString(("admin@procurementanywhere.com").getBytes()), 0, "className");
+        SetValue.action(browserConnection, "inputEmail", BrowserUtils.ID, new SecureString(("admin" +
+                "@procurementanywhere.com").getBytes()), 20, "className");
         SetValue.action(browserConnection, "inputPassword", BrowserUtils.ID, new SecureString(("paypacksh!p").getBytes()), 0, "className");
         DoClick.action(browserConnection, "//button[@type='button']", BrowserUtils.XPATH, 0, "className", BrowserUtils.MODE_SIMULATE);
 

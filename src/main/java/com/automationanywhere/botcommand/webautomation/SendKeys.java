@@ -4,6 +4,7 @@ package com.automationanywhere.botcommand.webautomation;
 import com.automationanywhere.botcommand.exception.BotCommandException;
 import com.automationanywhere.botcommand.utils.BrowserConnection;
 import com.automationanywhere.botcommand.utils.BrowserUtils;
+import com.automationanywhere.botcommand.utils.SendKeysProcessor;
 import com.automationanywhere.commandsdk.annotations.*;
 import com.automationanywhere.commandsdk.annotations.rules.CredentialAllowPassword;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
@@ -28,58 +29,6 @@ import java.util.function.Consumer;
 
 
 public class SendKeys {
-    private static final Map<String, Consumer<Actions>> specialKeys = new HashMap<>();
-
-    static {
-        specialKeys.put("CTRL DOWN", (a) -> a.keyDown(Keys.CONTROL));
-        specialKeys.put("CTRL UP", (a) -> a.keyUp(Keys.CONTROL));
-        specialKeys.put("SHIFT DOWN", (a) -> a.keyDown(Keys.SHIFT));
-        specialKeys.put("SHIFT UP", (a) -> a.keyUp(Keys.SHIFT));
-        specialKeys.put("ALT DOWN", (a) -> a.keyDown(Keys.ALT));
-        specialKeys.put("ALT UP", (a) -> a.keyUp(Keys.ALT));
-        specialKeys.put("ALT-GR DOWN", (a) -> a.keyDown(Keys.CONTROL).keyDown(Keys.ALT));
-        specialKeys.put("ALT-GR UP", (a) -> a.keyUp(Keys.ALT).keyUp(Keys.CONTROL));
-        specialKeys.put("ENTER", (a) -> a.sendKeys(Keys.ENTER));
-        specialKeys.put("RETURN", (a) -> a.sendKeys(Keys.ENTER));
-        specialKeys.put("NUM-ENTER", (a) -> a.sendKeys(Keys.ENTER));
-        specialKeys.put("BACKSPACE", (a) -> a.sendKeys(Keys.BACK_SPACE));
-        specialKeys.put("TAB", (a) -> a.sendKeys(Keys.TAB));
-        specialKeys.put("ESCAPE", (a) -> a.sendKeys(Keys.ESCAPE));
-        specialKeys.put("ESC", (a) -> a.sendKeys(Keys.ESCAPE));
-        specialKeys.put("PAGE UP", (a) -> a.sendKeys(Keys.PAGE_UP));
-        specialKeys.put("PAGE DOWN", (a) -> a.sendKeys(Keys.PAGE_DOWN));
-        specialKeys.put("HOME", (a) -> a.sendKeys(Keys.HOME));
-        specialKeys.put("LEFT ARROW", (a) -> a.sendKeys(Keys.ARROW_LEFT));
-        specialKeys.put("UP ARROW", (a) -> a.sendKeys(Keys.ARROW_UP));
-        specialKeys.put("RIGHT ARROW", (a) -> a.sendKeys(Keys.ARROW_RIGHT));
-        specialKeys.put("DOWN ARROW", (a) -> a.sendKeys(Keys.ARROW_DOWN));
-        specialKeys.put("DELETE", (a) -> a.sendKeys(Keys.DELETE));
-        specialKeys.put("INSERT", (a) -> a.sendKeys(Keys.INSERT));
-        specialKeys.put("DOLLAR", (a) -> a.sendKeys("$"));
-        specialKeys.put("PAUSE", (a) -> a.sendKeys(Keys.PAUSE));
-        specialKeys.put("END", (a) -> a.sendKeys(Keys.END));
-        // Handle function keys F1 to F12 dynamically
-        for (int i = 1; i <= 12; i++) {
-            int currentKeyIndex = i;
-            specialKeys.put("F" + i, (a) -> a.sendKeys(Keys.valueOf("F" + currentKeyIndex)));
-        }
-    }
-
-    public static void handleSpecialKey(Actions action, String key, Boolean capsLockPressed) {
-        if ("CAPS-LOCK".equals(key)) {
-            capsLockPressed = !capsLockPressed;
-            if (capsLockPressed) {
-                action.keyDown(Keys.SHIFT); // Simulate Caps Lock being on by holding Shift
-            } else {
-                action.keyUp(Keys.SHIFT); // Release Shift when Caps Lock is toggled off
-            }
-        } else if (specialKeys.containsKey(key)) {
-            specialKeys.get(key).accept(action);
-        } else {
-            // Unsupported special keys treated as normal text
-            action.sendKeys("[" + key + "]");
-        }
-    }
 
     @Execute
     public static void action(
@@ -149,27 +98,7 @@ public class SendKeys {
             }
 
             Actions action = new Actions(driver);
-            boolean capslockPressed = false;
-
-            int i = 0;
-            while (i < keyString.length()) {
-                char character = keyString.charAt(i);
-                if (character == '[') {
-                    // Extract the special key and handle accordingly
-                    int endIndex = keyString.indexOf(']', i);
-                    if (endIndex != -1) {
-                        String key = keyString.substring(i + 1, endIndex);
-                        handleSpecialKey(action, key, capslockPressed);
-                        i = endIndex + 1; // Advance to the character after the closing ']'
-                    } else {
-                        i++; // Move to the next character
-                    }
-                } else {
-                    action.sendKeys(String.valueOf(character));
-                    i++;
-                }
-            }
-
+            SendKeysProcessor.processInputString(keyString,action);
             action.sendKeys(element, "").perform();
         } catch (Exception e) {
             throw new BotCommandException("SENDKEYS " + search + " " + type + " : " + e.getMessage());

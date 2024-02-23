@@ -12,6 +12,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -298,6 +303,22 @@ public class BrowserTest {
         }
     }
 
+    @Test
+    public void sendKeys() throws InterruptedException, IOException, UnsupportedFlavorException {
+        OpenBrowser.action(browserConnection, "https://the-internet.herokuapp.com/key_presses", "maximized", null, null);
+        DoClick.action(browserConnection, "target", BrowserUtils.ID, 0, "className", BrowserUtils.MODE_SIMULATE);
+        SendKeys.action(browserConnection, "target", BrowserUtils.ID, "KEYS",
+                "[SHIFT DOWN]abcd[SHIFT UP]de [[CAPS-LOCK]fcgh[SHIFT DOWN]245[CTRL DOWN]ac[CTRL UP]", null, 0,
+                "className");
+        //ABCDde [FCGH@$%
+        String expected = GetValue.action(browserConnection,"target", BrowserUtils.ID, 0, "className").get();
+        Assert.assertEquals(expected, "ABCDde [FCGH@$%");
+        // Get the system clipboard
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        // Get the clipboard contents as a string
+        String result = (String) clipboard.getData(DataFlavor.stringFlavor);
+        Assert.assertEquals(expected, "ABCDde [FCGH@$%");
+    }
     @Test
     public void selectFrame() throws InterruptedException {
         OpenBrowser.action(browserConnection, "https://the-internet.herokuapp.com/iframe", "maximized", null, null);
