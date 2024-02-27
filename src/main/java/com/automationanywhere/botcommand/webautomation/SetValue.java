@@ -27,7 +27,8 @@ public class SetValue {
     @Execute
     public static void action(
             @Idx(index = "1", type = AttributeType.SESSION)
-            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -36,7 +37,8 @@ public class SetValue {
             @Pkg(label = "Search", description = "Should match the type", default_value_type = DataType.STRING)
             @NotEmpty String search,
             @Idx(index = "3", type = AttributeType.SELECT, options = {
-                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value = BrowserUtils.XPATH)),
+                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value =
+                            BrowserUtils.XPATH)),
                     @Idx.Option(index = "3.2", pkg = @Pkg(label = "Search by Element Id", value = BrowserUtils.ID)),
                     @Idx.Option(index = "3.3", pkg = @Pkg(label = "Search by Tag name", value = BrowserUtils.TAG)),
                     @Idx.Option(index = "3.4", pkg = @Pkg(label = "Search by CSS Selector", value = BrowserUtils.CSS)),
@@ -51,7 +53,8 @@ public class SetValue {
             SecureString newvalue,
 
             @Idx(index = "5", type = AttributeType.NUMBER)
-            @Pkg(label = "Timeout (Seconds)", description = "No wait if 0", default_value_type = DataType.NUMBER, default_value = "0")
+            @Pkg(label = "Timeout (Seconds)", description = "No wait if 0", default_value_type = DataType.NUMBER,
+                    default_value = "0")
             @NotEmpty Number timeout,
 
             @Idx(index = "6", type = AttributeType.TEXT)
@@ -59,13 +62,16 @@ public class SetValue {
             @NotEmpty String attribute
     ) {
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
-            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute,
+                    timeout.intValue());
             if (element == null) {
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector:" +
+                        " " + search + ", attribute: " + attribute);
             }
             ((JavascriptExecutor) driver).executeScript(
                     "var input = arguments[0];" + // Reference to your element

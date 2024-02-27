@@ -20,7 +20,8 @@ import java.util.Set;
 @BotCommand
 @CommandPkg(label = "Get Windows", name = "getwindows",
         description = "Get Windows",
-        node_label = "of session {{sessionName}} and assign to {{returnTo}} for session {{session}}", icon = "pkg.svg", group_label = "Window", comment = true, text_color = "#2F4F4F", background_color = "#2F4F4F",
+        node_label = "of session {{sessionName}} and assign to {{returnTo}} for session {{session}}", icon = "pkg" +
+        ".svg", group_label = "Window", comment = true, text_color = "#2F4F4F", background_color = "#2F4F4F",
         return_type = DataType.LIST, return_sub_type = DataType.STRING, return_label = "Window Handles, Key: " +
         "Window Handle ID | Value: Window Title",
         return_required = true)
@@ -30,14 +31,16 @@ public class GetWindows {
     @Execute
     public static ListValue action(
             @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session",
-                    description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+                    description = "Set valid Browser Automation session", default_value_type = DataType.SESSION,
+                    default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session
     ) {
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
             Set<String> handles = driver.getWindowHandles();

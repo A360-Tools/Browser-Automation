@@ -23,7 +23,8 @@ public class OpenBrowser {
     @Execute
     public static void action(
             @Idx(index = "1", type = AttributeType.SESSION) @Pkg(label = "Browser Automation session",
-                    description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+                    description = "Set valid Browser Automation session", default_value_type = DataType.SESSION,
+                    default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -41,15 +42,18 @@ public class OpenBrowser {
             @NotEmpty
             String selectMethod,
 
-            @Idx(index = "3.2.1", type = AttributeType.NUMBER) @Pkg(label = "Window Width", default_value_type = DataType.NUMBER, default_value = "1920")
+            @Idx(index = "3.2.1", type = AttributeType.NUMBER) @Pkg(label = "Window Width", default_value_type =
+                    DataType.NUMBER, default_value = "1920")
             @NotEmpty Number width,
 
-            @Idx(index = "3.2.2", type = AttributeType.NUMBER) @Pkg(label = "Window Height", default_value_type = DataType.NUMBER, default_value = "1080")
+            @Idx(index = "3.2.2", type = AttributeType.NUMBER) @Pkg(label = "Window Height", default_value_type =
+                    DataType.NUMBER, default_value = "1080")
             @NotEmpty Number height
     ) {
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
             switch (selectMethod) {

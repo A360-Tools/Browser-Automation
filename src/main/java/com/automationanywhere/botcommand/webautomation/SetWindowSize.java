@@ -14,7 +14,8 @@ import org.openqa.selenium.WebDriver;
 @BotCommand
 @CommandPkg(label = "Set Window Dimension", name = "setwindowdimension",
         description = "Set current window dimension",
-        node_label = "to {{width}} * {{height}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Window", text_color = "#2F4F4F", background_color = "#2F4F4F")
+        node_label = "to {{width}} * {{height}} for session {{session}}", icon = "pkg.svg", comment = true,
+        group_label = "Window", text_color = "#2F4F4F", background_color = "#2F4F4F")
 
 
 public class SetWindowSize {
@@ -48,8 +49,9 @@ public class SetWindowSize {
             @NotEmpty Number height
     ) {
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
             switch (selectMethod) {

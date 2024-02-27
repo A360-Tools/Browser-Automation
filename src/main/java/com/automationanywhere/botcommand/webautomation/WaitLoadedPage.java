@@ -18,7 +18,8 @@ import java.time.Duration;
 @BotCommand
 @CommandPkg(label = "Wait Page Loaded", name = "pageloaded",
         description = "Wait until Page is loaded",
-        node_label = "for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Wait", text_color = "#2F4F4F", background_color = "#2F4F4F",
+        node_label = "for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Wait", text_color =
+        "#2F4F4F", background_color = "#2F4F4F",
         return_type = DataType.BOOLEAN, return_label = "Status")
 
 
@@ -28,7 +29,8 @@ public class WaitLoadedPage {
     public static BooleanValue action(
 
             @Idx(index = "1", type = AttributeType.SESSION)
-            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -39,8 +41,9 @@ public class WaitLoadedPage {
     ) {
 
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
 

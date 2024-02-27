@@ -13,7 +13,8 @@ import org.openqa.selenium.WebDriver;
 @BotCommand
 @CommandPkg(label = "Navigate Page", name = "navigatepage",
         description = "Perform navigation on currently active tab",
-        node_label = "{{navigateOption}} for session {{session}}", icon = "pkg.svg", group_label = "Page", comment = true, text_color = "#2F4F4F", background_color = "#2F4F4F")
+        node_label = "{{navigateOption}} for session {{session}}", icon = "pkg.svg", group_label = "Page", comment =
+        true, text_color = "#2F4F4F", background_color = "#2F4F4F")
 
 
 public class Navigate {
@@ -36,8 +37,9 @@ public class Navigate {
     ) {
 
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
             switch (navigateOption) {

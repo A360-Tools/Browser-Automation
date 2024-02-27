@@ -29,7 +29,8 @@ import java.util.List;
 @BotCommand
 @CommandPkg(label = "Get Table Content", name = "gettablecontent",
         description = "Get Table Content",
-        node_label = "and assign to {{returnTo}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Get", text_color = "#2F4F4F", background_color = "#2F4F4F",
+        node_label = "and assign to {{returnTo}} for session {{session}}", icon = "pkg.svg", comment = true,
+        group_label = "Get", text_color = "#2F4F4F", background_color = "#2F4F4F",
         return_type = DataType.TABLE, return_label = "Value", return_required = true)
 
 
@@ -38,7 +39,8 @@ public class GetTable {
     @Execute
     public static TableValue action(
             @Idx(index = "1", type = AttributeType.SESSION)
-            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -49,7 +51,8 @@ public class GetTable {
             @NotEmpty String search,
 
             @Idx(index = "3", type = AttributeType.SELECT, options = {
-                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value = BrowserUtils.XPATH)),
+                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value =
+                            BrowserUtils.XPATH)),
                     @Idx.Option(index = "3.2", pkg = @Pkg(label = "Search by Element Id", value = BrowserUtils.ID)),
                     @Idx.Option(index = "3.3", pkg = @Pkg(label = "Search by Tag name", value = BrowserUtils.TAG)),
                     @Idx.Option(index = "3.4", pkg = @Pkg(label = "Search by CSS Selector", value = BrowserUtils.CSS)),
@@ -58,7 +61,8 @@ public class GetTable {
             @NotEmpty String type,
 
             @Idx(index = "4", type = AttributeType.NUMBER)
-            @Pkg(label = "Timeout (Seconds)", description = "No wait if 0", default_value_type = DataType.NUMBER, default_value = "0")
+            @Pkg(label = "Timeout (Seconds)", description = "No wait if 0", default_value_type = DataType.NUMBER,
+                    default_value = "0")
             @NotEmpty Number timeout,
 
             @Idx(index = "5", type = AttributeType.TEXT)
@@ -66,28 +70,37 @@ public class GetTable {
             @NotEmpty String attribute,
 
             @Idx(index = "6", type = AttributeType.RADIO, options = {
-                    @Idx.Option(index = "6.1", pkg = @Pkg(label = "NORMALIZED (Whitespace is normalized and trimmed)", value = "NORMALIZED_TEXT")),
-                    @Idx.Option(index = "6.2", pkg = @Pkg(label = "WHOLE TEXT (Whitespace is not normalized and not trimmed)", value = "WHOLE_TEXT")),
+                    @Idx.Option(index = "6.1", pkg = @Pkg(label = "NORMALIZED (Whitespace is normalized and trimmed)"
+                            , value = "NORMALIZED_TEXT")),
+                    @Idx.Option(index = "6.2", pkg = @Pkg(label = "WHOLE TEXT (Whitespace is not normalized and not " +
+                            "trimmed)", value = "WHOLE_TEXT")),
             })
-            @Pkg(label = "Text formatting options", default_value = "NORMALIZED_TEXT", default_value_type = DataType.STRING)
+            @Pkg(label = "Text formatting options", default_value = "NORMALIZED_TEXT", default_value_type =
+                    DataType.STRING)
             @NotEmpty String textType,
 
             @Idx(index = "7", type = AttributeType.RADIO, options = {
-                    @Idx.Option(index = "7.1", pkg = @Pkg(label = "ALL CHILDREN TEXT (All data within table data node)", value = "INCLUDE_CHILDREN")),
-                    @Idx.Option(index = "7.2", pkg = @Pkg(label = "OWN TEXT (Only table data node)", value = "ONLY_SELF")),
+                    @Idx.Option(index = "7.1", pkg = @Pkg(label = "ALL CHILDREN TEXT (All data within table data " +
+                            "node)", value = "INCLUDE_CHILDREN")),
+                    @Idx.Option(index = "7.2", pkg = @Pkg(label = "OWN TEXT (Only table data node)", value =
+                            "ONLY_SELF")),
             })
-            @Pkg(label = "Data extraction options", default_value = "INCLUDE_CHILDREN", default_value_type = DataType.STRING)
+            @Pkg(label = "Data extraction options", default_value = "INCLUDE_CHILDREN", default_value_type =
+                    DataType.STRING)
             @NotEmpty String extractionType
     ) {
 
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
-            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute, timeout.intValue());
+            WebElement element = BrowserUtils.waitForElementWithAttribute(driver, search, type, attribute,
+                    timeout.intValue());
             if (element == null) {
-                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector: " + search + ", attribute: " + attribute);
+                throw new BotCommandException("Element did not load within timeout: Search by " + type + ", selector:" +
+                        " " + search + ", attribute: " + attribute);
             }
 
             String bodyHTML = element.getAttribute("outerHTML");
@@ -104,8 +117,9 @@ public class GetTable {
             int maxColumnCount = headers.size();
             int startRow = 0;
 
-            if (!headers.isEmpty())
+            if (!headers.isEmpty()) {
                 startRow = 1;
+            }
 
             for (int i = startRow; i < rows.size(); i++) {
                 Element row = rows.get(i);
@@ -132,12 +146,15 @@ public class GetTable {
     }
 
     private static String getTextFromElement(Element element, String textType, String extractionType) {
-        if (textType.equalsIgnoreCase("WHOLE_TEXT") && extractionType.equalsIgnoreCase("INCLUDE_CHILDREN"))
+        if (textType.equalsIgnoreCase("WHOLE_TEXT") && extractionType.equalsIgnoreCase("INCLUDE_CHILDREN")) {
             return element.wholeText();
-        if (textType.equalsIgnoreCase("WHOLE_TEXT") && extractionType.equalsIgnoreCase("ONLY_SELF"))
+        }
+        if (textType.equalsIgnoreCase("WHOLE_TEXT") && extractionType.equalsIgnoreCase("ONLY_SELF")) {
             return element.wholeOwnText();
-        if (textType.equalsIgnoreCase("NORMALIZED_TEXT") && extractionType.equalsIgnoreCase("ONLY_SELF"))
+        }
+        if (textType.equalsIgnoreCase("NORMALIZED_TEXT") && extractionType.equalsIgnoreCase("ONLY_SELF")) {
             return element.ownText();
+        }
         return element.text();
     }
 

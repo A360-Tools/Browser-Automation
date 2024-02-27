@@ -14,6 +14,7 @@ import java.util.function.Consumer;
  */
 public class SendKeysProcessor {
     private static boolean capsLockPressed = false;
+    private static boolean shiftPressed = false;
     private static final Map<String, Consumer<Actions>> specialKeys = initializeSpecialKeys();
 
     public static void processInputString(String input, Actions action) {
@@ -28,7 +29,12 @@ public class SendKeysProcessor {
             } else {
                 for (char c : segment.toCharArray()) {
                     if (capsLockPressed && Character.isLetter(c)) {
+                        if(!shiftPressed ){
                             action.keyDown(Keys.SHIFT).sendKeys(String.valueOf(c)).keyUp(Keys.SHIFT);
+                        }
+                        else{
+                            action.keyUp(Keys.SHIFT).sendKeys(String.valueOf(c)).keyDown(Keys.SHIFT);
+                        }
                     } else {
                         action.sendKeys(String.valueOf(c));
                     }
@@ -79,8 +85,8 @@ public class SendKeysProcessor {
         Map<String, Consumer<Actions>> keys = new HashMap<>();
         keys.put("[CTRL DOWN]", (a) -> a.keyDown(Keys.CONTROL));
         keys.put("[CTRL UP]", (a) -> a.keyUp(Keys.CONTROL));
-        keys.put("[SHIFT DOWN]", (a) -> a.keyDown(Keys.SHIFT));
-        keys.put("[SHIFT UP]", (a) -> a.keyUp(Keys.SHIFT));
+        keys.put("[SHIFT DOWN]", (a) -> {a.keyDown(Keys.SHIFT);shiftPressed = true;});
+        keys.put("[SHIFT UP]", (a) -> {a.keyUp(Keys.SHIFT);shiftPressed = false;});
         keys.put("[ALT DOWN]", (a) -> a.keyDown(Keys.ALT));
         keys.put("[ALT UP]", (a) -> a.keyUp(Keys.ALT));
         keys.put("[ALT-GR DOWN]", (a) -> a.keyDown(Keys.CONTROL).keyDown(Keys.ALT));

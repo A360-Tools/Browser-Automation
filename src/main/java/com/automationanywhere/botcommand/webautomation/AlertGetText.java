@@ -19,7 +19,8 @@ import java.util.Optional;
         description = "Get Alert text message",
         return_type = DataType.STRING,
         return_required = true,
-        node_label = "for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Alerts", text_color = "#2F4F4F", background_color = "#2F4F4F")
+        node_label = "for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Alerts", text_color
+        = "#2F4F4F", background_color = "#2F4F4F")
 
 
 public class AlertGetText {
@@ -28,15 +29,17 @@ public class AlertGetText {
     @Execute
     public static StringValue action(
             @Idx(index = "1", type = AttributeType.SESSION)
-            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session
 
     ) {
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
             String alertText = "";

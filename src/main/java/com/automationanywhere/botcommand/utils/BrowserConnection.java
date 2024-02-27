@@ -17,7 +17,8 @@ public class BrowserConnection implements CloseableSessionObject {
     private Map<String, WebDriverFactory> factoryMap;
 
     public BrowserConnection(String profilePath, String browser, Boolean headless,
-                             String libraryCode, String driverPath, List<String> stringArguments, Map<String, Object> prefs) {
+                             String libraryCode, String driverPath, List<String> stringArguments,
+                             Map<String, Object> prefs) {
 
         initializeFactoryMap();
         this.library = Optional.ofNullable(libraryCode).orElse(EMPTY_STRING);
@@ -35,12 +36,6 @@ public class BrowserConnection implements CloseableSessionObject {
         }
     }
 
-    private static List<String> getDefaultArguments() {
-        return Arrays.stream(DriverDefaultArgument.values())
-                .map(DriverDefaultArgument::getArgument)
-                .collect(Collectors.toList());
-    }
-
     private void initializeFactoryMap() {
         factoryMap = new HashMap<>();
         factoryMap.put("CHROME", new ChromeWebDriverFactory());
@@ -53,8 +48,15 @@ public class BrowserConnection implements CloseableSessionObject {
         if (Optional.ofNullable(headless).orElse(Boolean.FALSE)) {
             arguments.add("--headless");
         }
-        Optional.ofNullable(profilePath).filter(path -> !path.isBlank()).ifPresent(path -> arguments.add("user-data-dir=" + path));
+        Optional.ofNullable(profilePath).filter(path -> !path.isBlank()).ifPresent(path -> arguments.add("user-data" +
+                "-dir=" + path));
         return arguments;
+    }
+
+    private static List<String> getDefaultArguments() {
+        return Arrays.stream(DriverDefaultArgument.values())
+                .map(DriverDefaultArgument::getArgument)
+                .collect(Collectors.toList());
     }
 
     public WebDriver getDriver() {

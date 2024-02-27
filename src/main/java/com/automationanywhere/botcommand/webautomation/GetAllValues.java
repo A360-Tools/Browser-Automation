@@ -23,8 +23,10 @@ import java.util.List;
 @BotCommand
 @CommandPkg(label = "Get Values", name = "getvalueselement",
         description = "Get value of an element list",
-        node_label = "and assign to {{returnTo}} for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Get", text_color = "#2F4F4F", background_color = "#2F4F4F",
-        return_type = DataType.DICTIONARY, return_sub_type = DataType.STRING, return_description = "key = <search>", return_label = "Values", return_required = true)
+        node_label = "and assign to {{returnTo}} for session {{session}}", icon = "pkg.svg", comment = true,
+        group_label = "Get", text_color = "#2F4F4F", background_color = "#2F4F4F",
+        return_type = DataType.DICTIONARY, return_sub_type = DataType.STRING, return_description = "key = <search>",
+        return_label = "Values", return_required = true)
 
 
 public class GetAllValues {
@@ -33,7 +35,8 @@ public class GetAllValues {
     @Execute
     public static DictionaryValue action(
             @Idx(index = "1", type = AttributeType.SESSION)
-            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session,
@@ -44,7 +47,8 @@ public class GetAllValues {
             @NotEmpty List<StringValue> searchList,
 
             @Idx(index = "3", type = AttributeType.SELECT, options = {
-                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value = BrowserUtils.XPATH)),
+                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value =
+                            BrowserUtils.XPATH)),
                     @Idx.Option(index = "3.2", pkg = @Pkg(label = "Search by Element Id", value = BrowserUtils.ID)),
                     @Idx.Option(index = "3.3", pkg = @Pkg(label = "Search by Tag name", value = BrowserUtils.TAG)),
                     @Idx.Option(index = "3.4", pkg = @Pkg(label = "Search by CSS Selector", value = BrowserUtils.CSS)),
@@ -54,8 +58,9 @@ public class GetAllValues {
     ) {
         LinkedHashMap<String, Value> values = new LinkedHashMap<>();
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
 

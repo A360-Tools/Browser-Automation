@@ -22,6 +22,22 @@ public class BrowserUtils {
 
     }
 
+    public static WebElement waitForElementWithAttribute(WebDriver driver, String search, String type,
+                                                         String attribute, int timeoutInSeconds) {
+        FluentWait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(timeoutInSeconds))
+                .pollingEvery(Duration.ofMillis(50))
+                .ignoring(NoSuchElementException.class);
+
+        return wait.until(webDriver -> {
+            WebElement element = getElement(driver, search, type);
+            if (element != null && element.getAttribute(attribute) != null) {
+                return element;
+            }
+            return null;
+        });
+    }
+
     public static WebElement getElement(WebDriver driver, String search, String type) {
         WebElement element = null;
         try {
@@ -46,21 +62,6 @@ public class BrowserUtils {
         } catch (Exception ignored) {
         }
         return element;
-    }
-
-    public static WebElement waitForElementWithAttribute(WebDriver driver, String search, String type, String attribute, int timeoutInSeconds) {
-        FluentWait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(timeoutInSeconds))
-                .pollingEvery(Duration.ofMillis(50))
-                .ignoring(NoSuchElementException.class);
-
-        return wait.until(webDriver -> {
-            WebElement element = getElement(driver, search, type);
-            if (element != null && element.getAttribute(attribute) != null) {
-                return element;
-            }
-            return null;
-        });
     }
 }
     

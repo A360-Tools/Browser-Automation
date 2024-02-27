@@ -19,7 +19,8 @@ import java.util.List;
 @BotCommand
 @CommandPkg(label = "Set Values", name = "setvalueselement",
         description = "Set values of an element list",
-        node_label = "for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Set", text_color = "#2F4F4F", background_color = "#2F4F4F")
+        node_label = "for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Set", text_color =
+        "#2F4F4F", background_color = "#2F4F4F")
 
 
 public class SetAllValues {
@@ -37,7 +38,8 @@ public class SetAllValues {
             @NotEmpty List<StringValue> searchList,
 
             @Idx(index = "3", type = AttributeType.SELECT, options = {
-                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value = BrowserUtils.XPATH)),
+                    @Idx.Option(index = "3.1", pkg = @Pkg(label = "Search by Element XPath", value =
+                            BrowserUtils.XPATH)),
                     @Idx.Option(index = "3.2", pkg = @Pkg(label = "Search by Element Id", value = BrowserUtils.ID)),
                     @Idx.Option(index = "3.3", pkg = @Pkg(label = "Search by Tag name", value = BrowserUtils.TAG)),
                     @Idx.Option(index = "3.4", pkg = @Pkg(label = "Search by CSS Selector", value = BrowserUtils.CSS)),
@@ -50,8 +52,9 @@ public class SetAllValues {
             @NotEmpty List<StringValue> newvalues
     ) {
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
             WebDriver driver = session.getDriver();
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
             int i = 0;

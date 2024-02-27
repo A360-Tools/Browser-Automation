@@ -17,7 +17,8 @@ import java.util.Set;
 @BotCommand
 @CommandPkg(label = "Open New Tab", name = "opennewtab",
         description = "Opens new tab and moves driver focus to new tab",
-        node_label = "in session {{session}}", icon = "pkg.svg", group_label = "Navigation", comment = true, text_color =
+        node_label = "in session {{session}}", icon = "pkg.svg", group_label = "Navigation", comment = true,
+        text_color =
         "#2F4F4F", background_color = "#2F4F4F")
 
 
@@ -34,8 +35,9 @@ public class OpenNewTab {
     ) {
 
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
@@ -43,8 +45,9 @@ public class OpenNewTab {
             jsExecutor.executeScript("window.open()");
             Set<String> newTabs = driver.getWindowHandles();
             newTabs.removeAll(oldTabs);
-            if (newTabs.iterator().hasNext())
+            if (newTabs.iterator().hasNext()) {
                 driver.switchTo().window(newTabs.iterator().next());
+            }
         } catch (Exception e) {
             throw new BotCommandException("Close currently active window: " + e.getMessage());
         }

@@ -10,7 +10,8 @@ import com.automationanywhere.commandsdk.model.DataType;
 
 
 @BotCommand
-@CommandPkg(label = "End session", name = "EndSessionWebAutomation", group_label = "Session", description = "Ends session and closes the browser",
+@CommandPkg(label = "End session", name = "EndSessionWebAutomation", group_label = "Session", description = "Ends " +
+        "session and closes the browser",
         comment = true,
         text_color = "#2F4F4F",
         background_color = "#2F4F4F",
@@ -20,7 +21,8 @@ public class Admin2_EndSessionWebAutomation {
     @Execute
     public void end(
             @Idx(index = "1", type = AttributeType.SESSION)
-            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session", default_value_type = DataType.SESSION, default_value = "Default")
+            @Pkg(label = "Browser Automation session", description = "Set valid Browser Automation session",
+                    default_value_type = DataType.SESSION, default_value = "Default")
             @NotEmpty
             @SessionObject
             BrowserConnection session) {

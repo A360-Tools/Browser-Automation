@@ -41,8 +41,9 @@ public class SelectWindow {
     ) {
 
         try {
-            if (session.isClosed())
+            if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
+            }
 
             WebDriver driver = session.getDriver();
             switch (selectionMethod) {
@@ -64,7 +65,8 @@ public class SelectWindow {
 
                     if (!matchFound) {
                         driver.switchTo().window(originalWindow);
-                        throw new BotCommandException("No window with title matching regex '" + handleOrTitle + "' found");
+                        throw new BotCommandException("No window with title matching regex '" + handleOrTitle + "' " +
+                                "found");
                     }
                     break;
                 default:
