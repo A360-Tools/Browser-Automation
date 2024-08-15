@@ -98,7 +98,7 @@ public class ClearInput {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("CLEAR " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Clear Input Failed" + search + " " + type + " : " + e.getMessage());
         }
 
     }

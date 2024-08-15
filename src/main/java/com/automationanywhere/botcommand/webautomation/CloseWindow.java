@@ -8,7 +8,10 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
+
+import java.util.Set;
 
 
 @BotCommand
@@ -36,9 +39,17 @@ public class CloseWindow {
             }
 
             WebDriver driver = session.getDriver();
-            driver.close();
+            try {
+                driver.close();
+                Set<String> handles = driver.getWindowHandles();
+                String lastHandle = handles.toArray(new String[ 0 ])[ handles.size() - 1 ];
+                driver.switchTo().window(lastHandle);
+            } catch (NoSuchSessionException ignored) {
+            }
+
+
         } catch (Exception e) {
-            throw new BotCommandException("Close currently active window: " + e.getMessage());
+            throw new BotCommandException("Close currently active window failed: " + e.getMessage());
         }
     }
 

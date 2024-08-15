@@ -75,7 +75,7 @@ public class GetAllValues {
             }
 
         } catch (Exception e) {
-            throw new BotCommandException("GETVALUES : " + e.getMessage());
+            throw new BotCommandException("Get all values failed : " + e.getMessage());
         }
 
         DictionaryValue dictValue = new DictionaryValue();

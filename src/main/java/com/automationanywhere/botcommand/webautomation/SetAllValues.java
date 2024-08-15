@@ -74,7 +74,7 @@ public class SetAllValues {
             }
 
         } catch (Exception e) {
-            throw new BotCommandException("SETVALUES : " + e.getMessage());
+            throw new BotCommandException("Set all values failed : " + e.getMessage());
         }
     }
 

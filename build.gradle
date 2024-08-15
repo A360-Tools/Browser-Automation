@@ -25,7 +25,7 @@ configure(allprojects) {
         testNgVersion = '7.9.0'
         loggerVersion = '2.20.0'
         jnaVersion = '5.3.1'
-        version '3.2.0'
+        version '3.3.0'
     }
     group "$groupName"
 
@@ -45,7 +45,7 @@ configure(allprojects) {
         artifactName = project.name
         group = "$groupName"
         author = "Sumit Kumar"
-        generatePackageWithDateTime = true
+        generatePackageWithDateTime = false
     }
 
     jar.dependsOn commandCodeGen
@@ -75,8 +75,8 @@ configure(allprojects) {
 }
 
 dependencies {
-    implementation 'org.seleniumhq.selenium:selenium-support:4.22.0'
-    implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.22.0'
-    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.23.0'
+    implementation 'org.seleniumhq.selenium:selenium-support:4.23.1'
+    implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.23.1'
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.23.1'
     implementation 'org.jsoup:jsoup:1.17.2'
 }

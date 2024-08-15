@@ -38,7 +38,7 @@ public class DoRelease {
             Actions actions = new Actions(driver);
             actions.release().perform();
         } catch (Exception e) {
-            throw new BotCommandException("RELEASE " + e.getMessage());
+            throw new BotCommandException("Release failed " + e.getMessage());
         }
     }
 

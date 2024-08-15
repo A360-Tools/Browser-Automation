@@ -73,7 +73,7 @@ public class SelectWindow {
                     throw new BotCommandException("Invalid selection method");
             }
         } catch (Exception e) {
-            throw new BotCommandException("Error in SelectWindow: " + e.getMessage());
+            throw new BotCommandException("Select window failed: " + e.getMessage());
         }
     }
 }

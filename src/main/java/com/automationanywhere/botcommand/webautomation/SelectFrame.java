@@ -73,7 +73,7 @@ public class SelectFrame {
             driver.switchTo().frame(element);
 
         } catch (Exception e) {
-            throw new BotCommandException("SELECTFRAME " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Select frame failed " + search + " " + type + " : " + e.getMessage());
         }
 
 

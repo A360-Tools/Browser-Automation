@@ -39,7 +39,7 @@ public class GetCurrentWindow {
             String window = driver.getWindowHandle();
             return new StringValue(window);
         } catch (Exception e) {
-            throw new BotCommandException("GETWINDOW : " + e.getMessage());
+            throw new BotCommandException("Get current window failed : " + e.getMessage());
         }
     }
 

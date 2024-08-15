@@ -8,10 +8,9 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
-import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
-
-import java.util.Set;
+import org.openqa.selenium.WindowType;
 
 
 @BotCommand
@@ -19,7 +18,7 @@ import java.util.Set;
         description = "Opens new tab and moves driver focus to new tab",
         node_label = "in session {{session}}", icon = "pkg.svg", group_label = "Navigation", comment = true,
         text_color =
-        "#2F4F4F", background_color = "#2F4F4F")
+                "#2F4F4F", background_color = "#2F4F4F")
 
 
 public class OpenNewTab {
@@ -40,16 +39,14 @@ public class OpenNewTab {
             }
 
             WebDriver driver = session.getDriver();
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-            Set<String> oldTabs = driver.getWindowHandles();
-            jsExecutor.executeScript("window.open()");
-            Set<String> newTabs = driver.getWindowHandles();
-            newTabs.removeAll(oldTabs);
-            if (newTabs.iterator().hasNext()) {
-                driver.switchTo().window(newTabs.iterator().next());
+            try {
+                driver.switchTo().newWindow(WindowType.TAB);
+            } catch (NoSuchSessionException e) {
+                //this wil automatically create new tab/window
+                session.reinitializeDriver();
             }
         } catch (Exception e) {
-            throw new BotCommandException("Close currently active window: " + e.getMessage());
+            throw new BotCommandException("Open new tab failed: " + e.getMessage());
         }
     }
 

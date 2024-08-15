@@ -74,7 +74,7 @@ public class DoClicknHold {
             actions.clickAndHold(element).perform();
 
         } catch (Exception e) {
-            throw new BotCommandException("CLICKNHOLD " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Click and Hold failed " + search + " " + type + " : " + e.getMessage());
         }
     }
 

@@ -109,7 +109,7 @@ public class DoSelect {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("SELECT " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Select failed " + search + " " + type + " : " + e.getMessage());
         }
 
 

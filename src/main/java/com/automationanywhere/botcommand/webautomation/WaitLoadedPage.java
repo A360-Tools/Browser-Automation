@@ -60,7 +60,7 @@ public class WaitLoadedPage {
 
             return new BooleanValue(isLoaded);
         } catch (Exception e) {
-            throw new BotCommandException("WAITPAGE : " + e.getMessage());
+            throw new BotCommandException("Wait page loaded failed: " + e.getMessage());
         }
 
 

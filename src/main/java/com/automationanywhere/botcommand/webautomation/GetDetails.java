@@ -123,7 +123,7 @@ public class GetDetails {
             dictValue.set(detailsMapValue);
             return dictValue;
         } catch (Exception e) {
-            throw new BotCommandException("GETDETAILS " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Get details failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

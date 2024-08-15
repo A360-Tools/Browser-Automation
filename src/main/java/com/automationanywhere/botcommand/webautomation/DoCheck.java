@@ -99,7 +99,7 @@ public class DoCheck {
 
 
         } catch (Exception e) {
-            throw new BotCommandException("CHECK " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Check element failed " + search + " " + type + " : " + e.getMessage());
 
         }
 

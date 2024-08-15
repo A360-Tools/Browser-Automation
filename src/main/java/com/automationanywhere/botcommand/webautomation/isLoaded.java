@@ -41,9 +41,9 @@ public class isLoaded {
             WebDriver driver = session.getDriver();
             isLoaded =
                     ((JavascriptExecutor) driver).executeScript("return document.readyState").toString().equalsIgnoreCase(
-                    "complete");
+                            "complete");
         } catch (Exception e) {
-            throw new BotCommandException("PAGEISLOADED : " + e.getMessage());
+            throw new BotCommandException("Is page loaded failed : " + e.getMessage());
         }
         return new BooleanValue(isLoaded);
     }

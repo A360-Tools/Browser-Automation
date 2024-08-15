@@ -57,7 +57,7 @@ public class Navigate {
             }
 
         } catch (Exception e) {
-            throw new BotCommandException("Close currently active window: " + e.getMessage());
+            throw new BotCommandException("Navigate window failed: " + e.getMessage());
         }
     }
 

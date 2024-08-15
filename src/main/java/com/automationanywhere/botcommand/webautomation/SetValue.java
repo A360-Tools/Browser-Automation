@@ -83,7 +83,7 @@ public class SetValue {
                             "input.dispatchEvent(event);", // Dispatch the 'change' event
                     element, newvalue.getInsecureString());
         } catch (Exception e) {
-            throw new BotCommandException("SETVALUE " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Set value " + search + " " + type + " : " + e.getMessage());
         }
     }
 

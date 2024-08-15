@@ -75,7 +75,7 @@ public class GetValue {
                     element).toString();
 
         } catch (Exception e) {
-            throw new BotCommandException("GETVALUE " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Get value failed " + search + " " + type + " : " + e.getMessage());
         }
         return new StringValue(value);
     }

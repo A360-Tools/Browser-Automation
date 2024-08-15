@@ -7,6 +7,9 @@ import com.automationanywhere.botcommand.utils.BrowserConnection;
 import com.automationanywhere.botcommand.utils.BrowserUtils;
 import com.automationanywhere.botcommand.webautomation.*;
 import com.automationanywhere.core.security.SecureString;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchSessionException;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -18,9 +21,10 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+
+import static com.automationanywhere.botcommand.utils.BrowserConnection.CHROME;
 
 public class BrowserTest {
 
@@ -34,13 +38,12 @@ public class BrowserTest {
                 Paths.get(localAppDataPath, "Google", "Chrome", "User Data", "Test Profile").toString();
         // Initialize browserConnection only once
         browserConnection = (BrowserConnection) session.start(
-                "chrome",
+                CHROME,
                 null,
                 testProfilePath,
                 null,
                 null,
-                null,
-                Boolean.FALSE
+                null
         ).getSession();
     }
 
@@ -277,6 +280,14 @@ public class BrowserTest {
         OpenBrowser.action(browserConnection, "https://www.google.com/", "maximized", null, null);
         String title = GetCurrentURL.action(browserConnection).get();
         Assert.assertEquals("https://www.google.com/", title);
+        int totalOpen =browserConnection.getDriver().getWindowHandles().size();
+        for(int i=0;i< totalOpen;i++){
+
+            CloseWindow.action(browserConnection);
+        }
+        OpenBrowser.action(browserConnection, "https://www.google.com/", "maximized", null, null);
+        title = GetCurrentURL.action(browserConnection).get();
+        Assert.assertEquals("https://www.google.com/", title);
     }
 
     @Test
@@ -371,4 +382,90 @@ public class BrowserTest {
         SelectWindow.action(browserConnection, "byHandle", googleHandle);
     }
 
+    @Test
+    public void testOpenNewWindow() {
+        Set<String> initialHandles;
+        try {
+            initialHandles = browserConnection.getDriver().getWindowHandles();
+        } catch (NoSuchSessionException e) {
+            initialHandles = new HashSet<>();
+        }
+        OpenBrowser.action(browserConnection, "https://example.com", "maximized", null, null);
+
+        OpenNewWindow.action(browserConnection);
+        Assert.assertEquals(browserConnection.getDriver().getWindowHandles().size(), initialHandles.size() +1, "A new " +
+                "window " +
+                "should have been opened");
+    }
+
+    @Test
+    public void testCloseWindow() {
+        Set<String> initialHandles;
+        try {
+            initialHandles = browserConnection.getDriver().getWindowHandles();
+        } catch (NoSuchSessionException e) {
+            initialHandles = new HashSet<>();
+        }
+        OpenBrowser.action(browserConnection, "https://example.com", "maximized", null, null);
+        // Open two additional windows
+        OpenNewWindow.action(browserConnection);
+        OpenNewWindow.action(browserConnection);
+        Assert.assertEquals(browserConnection.getDriver().getWindowHandles().size(),initialHandles.size()+2 , "Three");
+
+        // Close the remaining windows
+        int totalOpen =browserConnection.getDriver().getWindowHandles().size();
+        for(int i=0;i< totalOpen;i++){
+
+            CloseWindow.action(browserConnection);
+        }
+
+        try {
+            initialHandles = browserConnection.getDriver().getWindowHandles();
+        } catch (NoSuchSessionException e) {
+            initialHandles = new HashSet<>();
+        }
+        Assert.assertEquals(initialHandles.size(),0, "all windows should be closed");
+        // Close non existent windows, no error expected as already closed windows
+        CloseWindow.action(browserConnection);
+        CloseWindow.action(browserConnection);
+        //OpenNewWindow should not throw non existent session even after all windows are closed
+        //OpenNewWindow should be able to open new window
+        OpenNewWindow.action(browserConnection);
+        Assert.assertEquals(browserConnection.getDriver().getWindowHandles().size(),1, "single window should be " +
+                "present");
+        CloseWindow.action(browserConnection);
+        try {
+            initialHandles = browserConnection.getDriver().getWindowHandles();
+        } catch (NoSuchSessionException e) {
+            initialHandles = new HashSet<>();
+        }
+        Assert.assertEquals(initialHandles.size(),0, "all windows should be closed");
+    }
+
+    @Test
+    public void testTabAndWindowInteractions() {
+        Set<String> initialHandles;
+        try {
+            initialHandles = browserConnection.getDriver().getWindowHandles();
+        } catch (NoSuchSessionException e) {
+            initialHandles = new HashSet<>();
+        }
+        OpenBrowser.action(browserConnection, "https://example.com", "maximized", null, null);
+        // Open a new tab and a new window
+        OpenNewTab.action(browserConnection);
+        OpenNewWindow.action(browserConnection);
+        Set<String> handles = browserConnection.getDriver().getWindowHandles();
+        Assert.assertEquals(browserConnection.getDriver().getWindowHandles().size(), initialHandles.size()+2, "Three " +
+                "browser" +
+                " contexts should be " +
+                "open");
+
+        // Switch to each context and verify unique content
+        for (String handle : handles) {
+            browserConnection.getDriver().switchTo().window(handle);
+            OpenBrowser.action(browserConnection, "https://example.com", "maximized", null, null);
+            WebElement body = browserConnection.getDriver().findElement(By.tagName("body"));
+            Assert.assertNotNull(body, "Each context should have loaded content");
+        }
+    }
 }

@@ -40,7 +40,7 @@ public class GetPageSource {
             WebDriver driver = session.getDriver();
             html = driver.getPageSource();
         } catch (Exception e) {
-            throw new BotCommandException("GETPAGESORUCE : " + e.getMessage());
+            throw new BotCommandException("Get page source failed : " + e.getMessage());
         }
         return new StringValue(html);
 

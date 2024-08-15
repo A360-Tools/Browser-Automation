@@ -68,7 +68,7 @@ public class WaitLoadedElement {
             }
             return new BooleanValue(true);
         } catch (Exception e) {
-            throw new BotCommandException("WAITELEMENT " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Wait element loaded failed" + search + " " + type + " : " + e.getMessage());
         }
 
 

@@ -92,7 +92,7 @@ public class ScrollTo {
             }
 
         } catch (Exception e) {
-            throw new BotCommandException("MOVE " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Scroll to failed " + search + " " + type + " : " + e.getMessage());
         }
     }
 

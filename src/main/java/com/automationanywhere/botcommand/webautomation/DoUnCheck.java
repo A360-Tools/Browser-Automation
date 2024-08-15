@@ -97,7 +97,7 @@ public class DoUnCheck {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("CLICK " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("uncheck element failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

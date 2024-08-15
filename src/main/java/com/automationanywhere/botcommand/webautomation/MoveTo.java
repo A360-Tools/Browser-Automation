@@ -71,7 +71,7 @@ public class MoveTo {
             actions.moveToElement(element).perform();
 
         } catch (Exception e) {
-            throw new BotCommandException("MOVE " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Move to failed " + search + " " + type + " : " + e.getMessage());
         }
     }
 

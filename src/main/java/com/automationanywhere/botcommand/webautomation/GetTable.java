@@ -140,7 +140,7 @@ public class GetTable {
             Table outputTable = new Table(schemaList, rowList);
             return new TableValue(outputTable);
         } catch (Exception e) {
-            throw new BotCommandException("GETTABLE " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Get table failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

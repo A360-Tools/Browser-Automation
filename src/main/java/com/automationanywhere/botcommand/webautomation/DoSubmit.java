@@ -89,7 +89,7 @@ public class DoSubmit {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("SUBMIT " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Submit failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

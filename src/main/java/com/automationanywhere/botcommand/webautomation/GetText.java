@@ -92,7 +92,7 @@ public class GetText {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("GETTEXT " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Get text failed " + search + " " + type + " : " + e.getMessage());
         }
         return new StringValue(value);
     }

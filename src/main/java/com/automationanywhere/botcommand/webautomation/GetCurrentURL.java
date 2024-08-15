@@ -39,7 +39,7 @@ public class GetCurrentURL {
             WebDriver driver = session.getDriver();
             value = driver.getCurrentUrl();
         } catch (Exception e) {
-            throw new BotCommandException("GETCURRENTURL : " + e.getMessage());
+            throw new BotCommandException("Get current URL failed : " + e.getMessage());
         }
 
         return new StringValue(value);

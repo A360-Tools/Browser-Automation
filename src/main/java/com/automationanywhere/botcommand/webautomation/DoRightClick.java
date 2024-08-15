@@ -93,7 +93,7 @@ public class DoRightClick {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("CLICK " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Reight click failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

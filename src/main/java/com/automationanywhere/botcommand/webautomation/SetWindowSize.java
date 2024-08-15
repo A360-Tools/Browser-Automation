@@ -71,7 +71,7 @@ public class SetWindowSize {
             }
 
         } catch (Exception e) {
-            throw new BotCommandException("Set window screen size : " + e.getMessage());
+            throw new BotCommandException("Set window screen size failed : " + e.getMessage());
         }
     }
 

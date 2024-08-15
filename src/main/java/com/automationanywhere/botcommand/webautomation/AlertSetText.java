@@ -54,7 +54,7 @@ public class AlertSetText {
             }
 
         } catch (Exception e) {
-            throw new BotCommandException("Get alert text unsuccessful: " + e.getMessage());
+            throw new BotCommandException("Set alert text unsuccessful: " + e.getMessage());
         }
     }
 

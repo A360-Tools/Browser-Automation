@@ -16,6 +16,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
+import static com.automationanywhere.botcommand.utils.BrowserConnection.CHROME;
+
 /**
  * @author Sumit Kumar
  */
@@ -34,13 +36,12 @@ public class A360Challenge {
 
         // Initialize browserConnection only once
         browserConnection = (BrowserConnection) session.start(
-                "chrome",
-                null,
+                CHROME,
+                false,
                 testProfilePath,
                 null,
                 null,
-                null,
-                Boolean.FALSE
+                null
         ).getSession();
     }
 

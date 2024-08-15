@@ -9,7 +9,9 @@ import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WindowType;
 
 @BotCommand
 @CommandPkg(label = "Open URL", name = "openurl",
@@ -56,6 +58,14 @@ public class OpenBrowser {
             }
 
             WebDriver driver = session.getDriver();
+            try {
+                driver.get(url);
+            } catch (NoSuchSessionException e) {
+                //this wil automatically create new tab/window
+                session.reinitializeDriver();
+                driver = session.getDriver();
+                driver.get(url);
+            }
             switch (selectMethod) {
                 case "maximized":
                     driver.manage().window().maximize();
@@ -73,10 +83,8 @@ public class OpenBrowser {
                 default:
                     throw new BotCommandException("Invalid selection method");
             }
-
-            driver.get(url);
         } catch (Exception e) {
-            throw new BotCommandException("OPENPAGE " + url + " : " + e.getMessage());
+            throw new BotCommandException("open URL failed " + url + " : " + e.getMessage());
         }
     }
 

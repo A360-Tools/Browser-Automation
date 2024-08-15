@@ -50,7 +50,7 @@ public class ExecuteJS {
             value = jsExecutor.executeScript(fulljs).toString();
 
         } catch (Exception e) {
-            throw new BotCommandException("EXECUTEJS : " + e.getMessage());
+            throw new BotCommandException("Execute JavaScript failed : " + e.getMessage());
         }
         return new StringValue(value);
     }

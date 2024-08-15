@@ -22,8 +22,7 @@ import java.util.Set;
         description = "Get Windows",
         node_label = "of session {{sessionName}} and assign to {{returnTo}} for session {{session}}", icon = "pkg" +
         ".svg", group_label = "Window", comment = true, text_color = "#2F4F4F", background_color = "#2F4F4F",
-        return_type = DataType.LIST, return_sub_type = DataType.STRING, return_label = "Window Handles, Key: " +
-        "Window Handle ID | Value: Window Title",
+        return_type = DataType.LIST, return_sub_type = DataType.STRING, return_label = "Window Handles",
         return_required = true)
 
 public class GetWindows {
@@ -52,7 +51,7 @@ public class GetWindows {
             returnList.set(handleList);
             return returnList;
         } catch (Exception e) {
-            throw new BotCommandException("GETWINDOWS : " + e.getMessage());
+            throw new BotCommandException("Get windows failed : " + e.getMessage());
         }
     }
 }

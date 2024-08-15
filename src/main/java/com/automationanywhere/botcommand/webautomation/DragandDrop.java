@@ -86,7 +86,7 @@ public class DragandDrop {
             actions.dragAndDrop(fromElement, toElement).perform();
 
         } catch (Exception e) {
-            throw new BotCommandException("DRAGNDROP failed from " + fromSelector + " to " + toSelector + " " + type +
+            throw new BotCommandException("Drag and Drop failed from " + fromSelector + " to " + toSelector + " " + type +
                     " : " + e.getMessage());
         }
     }

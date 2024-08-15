@@ -89,7 +89,7 @@ public class DoClick {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("CLICK " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Click element failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

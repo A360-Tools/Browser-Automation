@@ -113,7 +113,7 @@ public class SendKeys {
             }
             action.sendKeys(element, "").perform();
         } catch (Exception e) {
-            throw new BotCommandException("SENDKEYS " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Send keys failed " + search + " " + type + " : " + e.getMessage());
         }
     }
 }

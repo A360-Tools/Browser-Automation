@@ -9,9 +9,13 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import com.automationanywhere.commandsdk.model.ReturnSettingsType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.automationanywhere.botcommand.utils.BrowserConnection.CHROME;
+import static com.automationanywhere.botcommand.utils.BrowserConnection.EDGE;
 
 
 @BotCommand
@@ -28,10 +32,10 @@ public class Admin1_StartSessionWebAutomation {
     @Execute
     public SessionValue start(
             @Idx(index = "1", type = AttributeType.SELECT, options = {
-                    @Idx.Option(index = "1.1", pkg = @Pkg(label = "Chrome", value = "Chrome")),
-                    @Idx.Option(index = "1.2", pkg = @Pkg(label = "Edge", value = "Edge")),
+                    @Idx.Option(index = "1.1", pkg = @Pkg(label = "Chrome", value = CHROME)),
+                    @Idx.Option(index = "1.2", pkg = @Pkg(label = "Edge", value = EDGE)),
             })
-            @Pkg(label = "Browser", default_value = "Chrome", default_value_type = DataType.STRING)
+            @Pkg(label = "Browser", default_value = CHROME, default_value_type = DataType.STRING)
             @NotEmpty String browser,
 
             @Idx(index = "2", type = AttributeType.BOOLEAN)
@@ -54,11 +58,7 @@ public class Admin1_StartSessionWebAutomation {
             @Pkg(label = "List of launch option arguments", description = "Eg. Following are added by default " +
                     "--disable-gpu , --ignore-certificate-errors, --disable-blink-features=AutomationControlled")
             @ListType(DataType.STRING)
-            List<Value> arguments,
-
-            @Idx(index = "7", type = AttributeType.CHECKBOX)
-            @Pkg(label = "Enable password manager")
-            Boolean enablePasswordManager
+            List<Value> arguments
 
     ) {
 
@@ -68,13 +68,9 @@ public class Admin1_StartSessionWebAutomation {
                 .map(Value::get)
                 .map(Object::toString)
                 .collect(Collectors.toList());
-
-        Map<String, Object> prefs = new HashMap<>();
-        prefs.put("credentials_enable_service", Optional.ofNullable(enablePasswordManager).orElse(Boolean.FALSE));
-        prefs.put("profile.password_manager_enabled", Optional.ofNullable(enablePasswordManager).orElse(Boolean.FALSE));
-
-        BrowserConnection connection = new BrowserConnection(profilepath, browser, headless, library, driverpath,
-                stringArguments, prefs);
+        headless = Optional.ofNullable(headless).orElse(Boolean.FALSE);
+        BrowserConnection connection = new BrowserConnection(browser,profilepath, headless, library, driverpath,
+                stringArguments);
 
         return SessionValue.builder()
                 .withSessionObject(connection)

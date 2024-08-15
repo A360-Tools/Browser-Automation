@@ -93,7 +93,7 @@ public class DoFocus {
             }
 
         } catch (Exception e) {
-            throw new BotCommandException("FOCUS " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Focus failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

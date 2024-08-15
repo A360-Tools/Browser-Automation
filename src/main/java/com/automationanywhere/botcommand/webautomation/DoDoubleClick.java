@@ -90,7 +90,7 @@ public class DoDoubleClick {
                     break;
             }
         } catch (Exception e) {
-            throw new BotCommandException("CLICK " + search + " " + type + " : " + e.getMessage());
+            throw new BotCommandException("Double click failed " + search + " " + type + " : " + e.getMessage());
         }
 
     }

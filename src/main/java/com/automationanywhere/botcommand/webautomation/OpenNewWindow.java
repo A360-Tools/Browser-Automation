@@ -8,16 +8,20 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WindowType;
+
 
 @BotCommand
-@CommandPkg(label = "Reset To Default", name = "todefaultcontent",
-        description = "Reset to Default Content (if set to a frame before)",
-        node_label = "content for session {{session}}", icon = "pkg.svg", comment = true, group_label = "Frame",
-        text_color = "#2F4F4F", background_color = "#2F4F4F")
+@CommandPkg(label = "Open New Window", name = "opennewwindow",
+        description = "Opens new tab and moves driver focus to new tab",
+        node_label = "in session {{session}}", icon = "pkg.svg", group_label = "Navigation", comment = true,
+        text_color =
+                "#2F4F4F", background_color = "#2F4F4F")
 
 
-public class ToDefault {
+public class OpenNewWindow {
 
     @Execute
     public static void action(
@@ -33,14 +37,16 @@ public class ToDefault {
             if (session.isClosed()) {
                 throw new BotCommandException("Valid browser automation session not found");
             }
-
             WebDriver driver = session.getDriver();
-            driver.switchTo().defaultContent();
+            try {
+                driver.switchTo().newWindow(WindowType.WINDOW);
+            } catch (NoSuchSessionException e) {
+                //this wil automatically create new tab/window
+                session.reinitializeDriver();
+            }
         } catch (Exception e) {
-            throw new BotCommandException("Reset to default failed " + e.getMessage());
+            throw new BotCommandException("Open new window failed: " + e.getMessage());
         }
-
-
     }
 
 }
