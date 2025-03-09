@@ -15,7 +15,7 @@ import org.openqa.selenium.WindowType;
 
 @BotCommand
 @CommandPkg(label = "Open New Window", name = "opennewwindow",
-        description = "Opens new tab and moves driver focus to new tab",
+        description = "Opens new window and moves driver focus to new tab",
         node_label = "in session {{session}}", icon = "pkg.svg", group_label = "Navigation", comment = true,
         text_color =
                 "#2F4F4F", background_color = "#2F4F4F")
