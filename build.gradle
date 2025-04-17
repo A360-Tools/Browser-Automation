@@ -25,7 +25,7 @@ configure(allprojects) {
         testNgVersion = '7.9.0'
         loggerVersion = '2.20.0'
         jnaVersion = '5.3.1'
-        version '3.3.0'
+        version '3.4.0'
     }
     group "$groupName"
 
@@ -75,8 +75,9 @@ configure(allprojects) {
 }
 
 dependencies {
-    implementation 'org.seleniumhq.selenium:selenium-support:4.28.1'
-    implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.28.1'
-    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.28.1'
-    implementation 'org.jsoup:jsoup:1.18.1'
+    //https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+    implementation 'org.seleniumhq.selenium:selenium-support:4.31.0'
+    implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.31.0'
+    implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.31.0'
+    implementation 'org.jsoup:jsoup:1.19.1'
 }

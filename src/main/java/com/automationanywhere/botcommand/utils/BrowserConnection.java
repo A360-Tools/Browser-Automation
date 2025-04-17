@@ -6,7 +6,6 @@ import com.automationanywhere.botcommand.utils.impl.EdgeWebDriverFactory;
 import com.automationanywhere.botcommand.utils.interfaces.WebDriverFactory;
 import com.automationanywhere.toolchain.runtime.session.CloseableSessionObject;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WindowType;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -124,14 +123,6 @@ public class BrowserConnection implements CloseableSessionObject {
         return mergedArguments.stream().distinct().collect(Collectors.toList());
     }
 
-
-    private void initializeDriver(String driverPath, List<String> arguments, Map<String, Object> preferences, String browserType) {
-        WebDriverFactory factory = getWebDriverFactory(browserType);
-        driver = factory.createDriver(arguments, preferences, driverPath);
-        if (driver == null) {
-            throw new BotCommandException("Unable to initialize the WebDriver.");
-        }
-    }
 
     private enum DriverArguments {
         NO_SANDBOX("--no-sandbox"),
