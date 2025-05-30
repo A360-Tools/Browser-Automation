@@ -7,6 +7,7 @@ import com.automationanywhere.commandsdk.annotations.CommandPkg;
 import com.automationanywhere.commandsdk.annotations.Execute;
 import com.automationanywhere.commandsdk.annotations.Idx;
 import com.automationanywhere.commandsdk.annotations.Pkg;
+import com.automationanywhere.commandsdk.annotations.rules.FileExtension;
 import com.automationanywhere.commandsdk.annotations.rules.GreaterThanEqualTo;
 import com.automationanywhere.commandsdk.annotations.rules.LessThanEqualTo;
 import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
@@ -44,13 +45,15 @@ public class SaveToPDF {
       @Idx(index = "2", type = AttributeType.FILE)
       @Pkg(label = "File Path", description = "Full path where PDF should be saved (including .pdf extension)",
           default_value_type = DataType.FILE)
+      @FileExtension("pdf")
       @NotEmpty String filePath,
 
-      @Idx(index = "3", type = AttributeType.RADIO, options = {
+      @Idx(index = "3", type = AttributeType.SELECT, options = {
           @Idx.Option(index = "3.1", pkg = @Pkg(label = "Portrait", value = "PORTRAIT")),
           @Idx.Option(index = "3.2", pkg = @Pkg(label = "Landscape", value = "LANDSCAPE"))
       })
       @Pkg(label = "Orientation", default_value = "PORTRAIT", default_value_type = DataType.STRING)
+      @SelectModes
       @NotEmpty String orientation,
 
       @Idx(index = "4", type = AttributeType.TEXT)
@@ -58,10 +61,10 @@ public class SaveToPDF {
           default_value_type = DataType.STRING)
       String pageRanges,
 
-      @Idx(index = "5", type = AttributeType.RADIO, options = {
-          @Idx.Option(index = "5.1", pkg = @Pkg(label = "A4 (21.0 x 29.7 cm)", value = "A4")),
-          @Idx.Option(index = "5.2", pkg = @Pkg(label = "Letter (21.6 x 27.9 cm)", value = "LETTER")),
-          @Idx.Option(index = "5.3", pkg = @Pkg(label = "Legal (21.6 x 35.6 cm)", value = "LEGAL")),
+      @Idx(index = "5", type = AttributeType.SELECT, options = {
+          @Idx.Option(index = "5.1", pkg = @Pkg(label = "A4", value = "A4")),
+          @Idx.Option(index = "5.2", pkg = @Pkg(label = "Letter", value = "LETTER")),
+          @Idx.Option(index = "5.3", pkg = @Pkg(label = "Legal", value = "LEGAL")),
           @Idx.Option(index = "5.4", pkg = @Pkg(label = "Custom", value = "CUSTOM"))
       })
       @Pkg(label = "Page Size", default_value = "A4", default_value_type = DataType.STRING)
@@ -70,17 +73,21 @@ public class SaveToPDF {
 
       @Idx(index = "5.4.1", type = AttributeType.NUMBER)
       @Pkg(label = "Custom Width (cm)", default_value_type = DataType.NUMBER, default_value = "21.0")
+      @NotEmpty
+      @GreaterThanEqualTo("0.1")
       Number customWidth,
 
       @Idx(index = "5.4.2", type = AttributeType.NUMBER)
       @Pkg(label = "Custom Height (cm)", default_value_type = DataType.NUMBER, default_value = "29.7")
+      @NotEmpty
+      @GreaterThanEqualTo("0.1")
       Number customHeight,
 
-      @Idx(index = "6", type = AttributeType.RADIO, options = {
-          @Idx.Option(index = "6.1", pkg = @Pkg(label = "No Margins (0.0 cm)", value = "NONE")),
-          @Idx.Option(index = "6.2", pkg = @Pkg(label = "Small (0.5 cm)", value = "SMALL")),
-          @Idx.Option(index = "6.3", pkg = @Pkg(label = "Standard (1.0 cm)", value = "STANDARD")),
-          @Idx.Option(index = "6.4", pkg = @Pkg(label = "Large (2.0 cm)", value = "LARGE")),
+      @Idx(index = "6", type = AttributeType.SELECT, options = {
+          @Idx.Option(index = "6.1", pkg = @Pkg(label = "No Margins", value = "NONE")),
+          @Idx.Option(index = "6.2", pkg = @Pkg(label = "Small", value = "SMALL")),
+          @Idx.Option(index = "6.3", pkg = @Pkg(label = "Standard", value = "STANDARD")),
+          @Idx.Option(index = "6.4", pkg = @Pkg(label = "Large", value = "LARGE")),
           @Idx.Option(index = "6.5", pkg = @Pkg(label = "Custom", value = "CUSTOM"))
       })
       @Pkg(label = "Margin Settings", default_value = "STANDARD", default_value_type = DataType.STRING)
@@ -89,18 +96,26 @@ public class SaveToPDF {
 
       @Idx(index = "6.5.1", type = AttributeType.NUMBER)
       @Pkg(label = "Custom Top Margin (cm)", default_value_type = DataType.NUMBER, default_value = "1.0")
+      @NotEmpty
+      @GreaterThanEqualTo("0.0")
       Number customTopMargin,
 
       @Idx(index = "6.5.2", type = AttributeType.NUMBER)
       @Pkg(label = "Custom Bottom Margin (cm)", default_value_type = DataType.NUMBER, default_value = "1.0")
+      @NotEmpty
+      @GreaterThanEqualTo("0.0")
       Number customBottomMargin,
 
       @Idx(index = "6.5.3", type = AttributeType.NUMBER)
       @Pkg(label = "Custom Left Margin (cm)", default_value_type = DataType.NUMBER, default_value = "1.0")
+      @NotEmpty
+      @GreaterThanEqualTo("0.0")
       Number customLeftMargin,
 
       @Idx(index = "6.5.4", type = AttributeType.NUMBER)
       @Pkg(label = "Custom Right Margin (cm)", default_value_type = DataType.NUMBER, default_value = "1.0")
+      @NotEmpty
+      @GreaterThanEqualTo("0.0")
       Number customRightMargin,
 
       @Idx(index = "7", type = AttributeType.NUMBER)
@@ -151,15 +166,16 @@ public class SaveToPDF {
       PageSize pageSizeObj;
       switch (pageSize) {
         case "A4":
-          pageSizeObj = new PageSize(21.0, 29.7);
+          pageSizeObj = new PageSize(21.0, 29.7); // cm
           break;
         case "LETTER":
-          pageSizeObj = new PageSize(21.6, 27.9);
+          pageSizeObj = new PageSize(21.6, 27.9); // cm
           break;
         case "LEGAL":
-          pageSizeObj = new PageSize(21.6, 35.6);
+          pageSizeObj = new PageSize(21.6, 35.6); // cm
           break;
         case "CUSTOM":
+          // Values already validated by annotations if custom is selected
           pageSizeObj = new PageSize(customWidth.doubleValue(), customHeight.doubleValue());
           break;
         default:
@@ -172,16 +188,16 @@ public class SaveToPDF {
       PageMargin margins;
       switch (marginSettings) {
         case "NONE":
-          margins = new PageMargin(0.0, 0.0, 0.0, 0.0);
+          margins = new PageMargin(0.0, 0.0, 0.0, 0.0); // cm
           break;
         case "SMALL":
-          margins = new PageMargin(0.5, 0.5, 0.5, 0.5);
+          margins = new PageMargin(0.5, 0.5, 0.5, 0.5); // cm
           break;
         case "STANDARD":
-          margins = new PageMargin(1.0, 1.0, 1.0, 1.0);
+          margins = new PageMargin(1.0, 1.0, 1.0, 1.0); // cm
           break;
         case "LARGE":
-          margins = new PageMargin(2.0, 2.0, 2.0, 2.0);
+          margins = new PageMargin(2.0, 2.0, 2.0, 2.0); // cm
           break;
         case "CUSTOM":
           margins = new PageMargin(
@@ -197,17 +213,15 @@ public class SaveToPDF {
       }
       printOptions.setPageMargin(margins);
 
-      // Set scale (validate range)
+      // Set scale (validate range) - already validated by annotations
       double scaleValue = scale.doubleValue();
+
       if (scaleValue < 0.1 || scaleValue > 2.0) {
-        throw new BotCommandException("Scale must be between 0.1 and 2.0");
+        throw new BotCommandException(
+            "Scale must be between 0.1 and 2.0. This should have been caught by annotations.");
       }
       printOptions.setScale(scaleValue);
-
-      // Set background printing
       printOptions.setBackground(printBackground);
-
-      // Set shrink to fit
       printOptions.setShrinkToFit(shrinkToFit);
 
       // Generate PDF
@@ -233,7 +247,6 @@ public class SaveToPDF {
         }
       }
 
-      // Save PDF to file using FileOutputStream
       try (FileOutputStream fos = new FileOutputStream(file)) {
         fos.write(pdfContent);
         fos.flush();
@@ -242,7 +255,7 @@ public class SaveToPDF {
     } catch (IOException e) {
       throw new BotCommandException("Failed to save PDF file: " + e.getMessage());
     } catch (Exception e) {
-      throw new BotCommandException("Save to PDF failed: " + e.getMessage());
+      throw new BotCommandException("Save to PDF failed: " + e.getMessage(), e);
     }
   }
 }
