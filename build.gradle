@@ -22,10 +22,9 @@ configure(allprojects) {
 
     ext {
         groupName = 'com.automationanywhere'
-        testNgVersion = '7.9.0'
+        testNgVersion = '7.11.0'
         loggerVersion = '2.20.0'
-        jnaVersion = '5.3.1'
-        version '3.4.4'
+        version '3.5.0'
     }
     group "$groupName"
 
@@ -70,13 +69,13 @@ configure(allprojects) {
         testImplementation group: "org.testng", name: "testng", version: "$testNgVersion"
 
         //table and record type use this internally and is required for table and record value types
-        testImplementation 'com.google.protobuf:protobuf-java:4.30.2'
+        testImplementation 'com.google.protobuf:protobuf-java:4.32.0'
 
         //https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-        implementation 'org.seleniumhq.selenium:selenium-support:4.33.0'
-        implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.33.0'
-        implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.33.0'
-        implementation 'org.jsoup:jsoup:1.20.1'
+        implementation 'org.seleniumhq.selenium:selenium-support:4.35.0'
+        implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.35.0'
+        implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.35.0'
+        implementation 'org.jsoup:jsoup:1.21.2'
     }
 
 }
