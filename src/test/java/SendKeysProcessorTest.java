@@ -32,13 +32,13 @@ public class SendKeysProcessorTest {
 
   @Test
   public void testPlainText() {
-    SendKeysProcessor.processInputString("hello", actions);
+    SendKeysProcessor.processInputString("abcde", actions);
     InOrder order = inOrder(actions);
-    order.verify(actions).sendKeys("h");
+    order.verify(actions).sendKeys("a");
+    order.verify(actions).sendKeys("b");
+    order.verify(actions).sendKeys("c");
+    order.verify(actions).sendKeys("d");
     order.verify(actions).sendKeys("e");
-    order.verify(actions).sendKeys("l");
-    order.verify(actions).sendKeys("l");
-    order.verify(actions).sendKeys("o");
   }
 
   @Test
@@ -55,19 +55,19 @@ public class SendKeysProcessorTest {
 
   @Test
   public void testMixedTextAndSpecialKeys() {
-    SendKeysProcessor.processInputString("hello[ENTER]world", actions);
+    SendKeysProcessor.processInputString("abcde[ENTER]fghij", actions);
     InOrder order = inOrder(actions);
-    order.verify(actions).sendKeys("h");
-    order.verify(actions).sendKeys("e");
-    order.verify(actions).sendKeys("l");
-    order.verify(actions).sendKeys("l");
-    order.verify(actions).sendKeys("o");
-    order.verify(actions).sendKeys(Keys.ENTER);
-    order.verify(actions).sendKeys("w");
-    order.verify(actions).sendKeys("o");
-    order.verify(actions).sendKeys("r");
-    order.verify(actions).sendKeys("l");
+    order.verify(actions).sendKeys("a");
+    order.verify(actions).sendKeys("b");
+    order.verify(actions).sendKeys("c");
     order.verify(actions).sendKeys("d");
+    order.verify(actions).sendKeys("e");
+    order.verify(actions).sendKeys(Keys.ENTER);
+    order.verify(actions).sendKeys("f");
+    order.verify(actions).sendKeys("g");
+    order.verify(actions).sendKeys("h");
+    order.verify(actions).sendKeys("i");
+    order.verify(actions).sendKeys("j");
   }
 
   @Test
@@ -158,19 +158,19 @@ public class SendKeysProcessorTest {
 
   @Test
   public void testUnmatchedBracket() {
-    SendKeysProcessor.processInputString("hello[world", actions);
+    SendKeysProcessor.processInputString("abcde[fghij", actions);
     InOrder order = inOrder(actions);
-    order.verify(actions).sendKeys("h");
-    order.verify(actions).sendKeys("e");
-    order.verify(actions).sendKeys("l");
-    order.verify(actions).sendKeys("l");
-    order.verify(actions).sendKeys("o");
-    order.verify(actions).sendKeys("[");
-    order.verify(actions).sendKeys("w");
-    order.verify(actions).sendKeys("o");
-    order.verify(actions).sendKeys("r");
-    order.verify(actions).sendKeys("l");
+    order.verify(actions).sendKeys("a");
+    order.verify(actions).sendKeys("b");
+    order.verify(actions).sendKeys("c");
     order.verify(actions).sendKeys("d");
+    order.verify(actions).sendKeys("e");
+    order.verify(actions).sendKeys("[");
+    order.verify(actions).sendKeys("f");
+    order.verify(actions).sendKeys("g");
+    order.verify(actions).sendKeys("h");
+    order.verify(actions).sendKeys("i");
+    order.verify(actions).sendKeys("j");
   }
 
   @Test
