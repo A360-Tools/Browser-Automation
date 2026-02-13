@@ -13,6 +13,10 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.InvalidSelectorException;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -92,6 +96,14 @@ public class DragandDrop {
       Actions actions = new Actions(driver);
       actions.dragAndDrop(fromElement, toElement).perform();
 
+    } catch (StaleElementReferenceException e) {
+      throw new BotCommandException("Drag and drop failed: Element is no longer attached to the DOM. From: " + fromSelector + ", To: " + toSelector + " (" + type + "). The page may have refreshed or the element was removed.");
+    } catch (ElementNotInteractableException e) {
+      throw new BotCommandException("Drag and drop failed: Element found but not interactable. From: " + fromSelector + ", To: " + toSelector + " (" + type + "). It may be hidden, disabled, or covered.");
+    } catch (TimeoutException e) {
+      throw new BotCommandException("Drag and drop failed: Timed out waiting for element. From: " + fromSelector + ", To: " + toSelector + " (" + type + "). " + e.getMessage());
+    } catch (InvalidSelectorException e) {
+      throw new BotCommandException("Drag and drop failed: Invalid selector. From: " + fromSelector + ", To: " + toSelector + " (" + type + "). " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException(
           "Drag and Drop failed from " + fromSelector + " to " + toSelector + " " + type +

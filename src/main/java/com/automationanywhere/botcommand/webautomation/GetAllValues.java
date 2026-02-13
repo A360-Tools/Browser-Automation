@@ -18,7 +18,11 @@ import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import java.util.LinkedHashMap;
 import java.util.List;
+import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -59,6 +63,7 @@ public class GetAllValues {
       @NotEmpty String type
   ) {
     LinkedHashMap<String, Value> values = new LinkedHashMap<>();
+    String search = "";
     try {
       if (session.isClosed()) {
         throw new BotCommandException("Valid browser automation session not found");
@@ -68,7 +73,7 @@ public class GetAllValues {
 
       for (StringValue stringValue : searchList) {
         String value = "";
-        String search = stringValue.get();
+        search = stringValue.get();
         WebElement element = BrowserUtils.getElement(driver, search, type);
         value = ((JavascriptExecutor) driver).executeScript(
             "return arguments[0].value;",
@@ -76,6 +81,14 @@ public class GetAllValues {
         values.put(search, new StringValue(value));
       }
 
+    } catch (StaleElementReferenceException e) {
+      throw new BotCommandException("Get all values failed: Element is no longer attached to the DOM. Selector: " + search + " (" + type + "). The page may have refreshed or the element was removed.");
+    } catch (ElementNotInteractableException e) {
+      throw new BotCommandException("Get all values failed: Element found but not interactable. Selector: " + search + " (" + type + "). It may be hidden, disabled, or covered.");
+    } catch (TimeoutException e) {
+      throw new BotCommandException("Get all values failed: Timed out waiting for element. Selector: " + search + " (" + type + "). " + e.getMessage());
+    } catch (InvalidSelectorException e) {
+      throw new BotCommandException("Get all values failed: Invalid selector. Selector: " + search + " (" + type + "). " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Get all values failed : " + e.getMessage());
     }

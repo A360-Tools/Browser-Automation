@@ -13,6 +13,7 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.JavascriptException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 
@@ -53,6 +54,8 @@ public class ExecuteJS {
       JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
       value = jsExecutor.executeScript(fulljs).toString();
 
+    } catch (JavascriptException e) {
+      throw new BotCommandException("Execute JavaScript failed: Script execution error: " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Execute JavaScript failed : " + e.getMessage());
     }

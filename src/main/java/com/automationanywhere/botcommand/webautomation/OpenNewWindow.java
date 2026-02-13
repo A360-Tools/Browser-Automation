@@ -13,6 +13,7 @@ import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.NoSuchSessionException;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WindowType;
 
@@ -47,6 +48,8 @@ public class OpenNewWindow {
         //this wil automatically create new tab/window
         session.reinitializeDriver();
       }
+    } catch (NoSuchWindowException e) {
+      throw new BotCommandException("Open new window failed: Browser window/tab is no longer available. " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Open new window failed: " + e.getMessage());
     }

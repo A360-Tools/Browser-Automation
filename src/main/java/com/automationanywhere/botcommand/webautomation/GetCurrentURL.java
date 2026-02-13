@@ -14,6 +14,7 @@ import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 @BotCommand
 @CommandPkg(label = "Get Current URL", name = "getcurrenturl",
@@ -41,6 +42,8 @@ public class GetCurrentURL {
 
       WebDriver driver = session.getDriver();
       value = driver.getCurrentUrl();
+    } catch (WebDriverException e) {
+      throw new BotCommandException("Get current URL failed: Browser communication error: " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Get current URL failed : " + e.getMessage());
     }

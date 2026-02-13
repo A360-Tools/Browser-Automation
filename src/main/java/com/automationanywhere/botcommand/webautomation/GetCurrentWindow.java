@@ -13,6 +13,7 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebDriver;
 
 @BotCommand
@@ -42,6 +43,8 @@ public class GetCurrentWindow {
       WebDriver driver = session.getDriver();
       String window = driver.getWindowHandle();
       return new StringValue(window);
+    } catch (NoSuchWindowException e) {
+      throw new BotCommandException("Get current window failed: Browser window/tab is no longer available. " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Get current window failed : " + e.getMessage());
     }

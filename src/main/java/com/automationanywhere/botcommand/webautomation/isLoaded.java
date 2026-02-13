@@ -15,6 +15,7 @@ import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 
 @BotCommand
@@ -46,6 +47,8 @@ public class isLoaded {
           ((JavascriptExecutor) driver).executeScript("return document.readyState").toString()
               .equalsIgnoreCase(
                   "complete");
+    } catch (WebDriverException e) {
+      throw new BotCommandException("Is page loaded failed: Browser communication error: " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Is page loaded failed : " + e.getMessage());
     }

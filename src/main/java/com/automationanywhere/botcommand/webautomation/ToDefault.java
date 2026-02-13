@@ -12,6 +12,7 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.WebDriver;
 
 @BotCommand
@@ -39,6 +40,8 @@ public class ToDefault {
 
       WebDriver driver = session.getDriver();
       driver.switchTo().defaultContent();
+    } catch (NoSuchFrameException e) {
+      throw new BotCommandException("Reset to default failed: The specified frame could not be found. " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Reset to default failed " + e.getMessage());
     }

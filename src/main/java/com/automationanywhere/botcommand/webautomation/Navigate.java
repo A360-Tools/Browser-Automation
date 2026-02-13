@@ -13,6 +13,7 @@ import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 @BotCommand
 @CommandPkg(label = "Navigate Page", name = "navigatepage",
@@ -59,6 +60,8 @@ public class Navigate {
           throw new BotCommandException("Invalid selection method");
       }
 
+    } catch (WebDriverException e) {
+      throw new BotCommandException("Navigate failed: Browser communication error: " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Navigate window failed: " + e.getMessage());
     }

@@ -17,6 +17,7 @@ import com.automationanywhere.commandsdk.model.DataType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebDriver;
 
 
@@ -54,6 +55,8 @@ public class GetWindows {
       ListValue returnList = new ListValue();
       returnList.set(handleList);
       return returnList;
+    } catch (NoSuchWindowException e) {
+      throw new BotCommandException("Get windows failed: Browser window/tab is no longer available. " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Get windows failed : " + e.getMessage());
     }

@@ -14,7 +14,11 @@ import com.automationanywhere.commandsdk.annotations.rules.SelectModes;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.ElementNotInteractableException;
+import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -113,6 +117,14 @@ public class DoSelect {
         default:
           break;
       }
+    } catch (StaleElementReferenceException e) {
+      throw new BotCommandException("Select failed" + ": Element is no longer attached to the DOM. Selector: " + search + " (" + type + "). The page may have refreshed or the element was removed.");
+    } catch (ElementNotInteractableException e) {
+      throw new BotCommandException("Select failed" + ": Element found but not interactable. Selector: " + search + " (" + type + "). It may be hidden, disabled, or covered.");
+    } catch (TimeoutException e) {
+      throw new BotCommandException("Select failed" + ": Timed out waiting for element. Selector: " + search + " (" + type + "). " + e.getMessage());
+    } catch (InvalidSelectorException e) {
+      throw new BotCommandException("Select failed" + ": Invalid selector. Selector: " + search + " (" + type + "). " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException(
           "Select failed " + search + " " + type + " : " + e.getMessage());

@@ -5,7 +5,7 @@ buildscript {
             dirs 'libs'
         }
         dependencies {
-            classpath name: 'package-compileonly-sdk', version: '1.5.0'
+            classpath name: 'package-compileonly-sdk', version: '1.7.0'
             classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.1"
         }
     }
@@ -62,20 +62,21 @@ configure(allprojects) {
     }
 
     dependencies {
-        annotationProcessor name: 'package-compileonly-sdk', version: '1.5.0'
-        compileOnly name: 'package-compileonly-sdk', version: '1.5.0'
+        annotationProcessor name: 'package-compileonly-sdk', version: '1.7.0'
+        compileOnly name: 'package-compileonly-sdk', version: '1.7.0'
         implementation name: 'package-runtime-sdk', version: '1.0.0'
-        testImplementation name: 'package-compileonly-sdk', version: '1.5.0'
+        testImplementation name: 'package-compileonly-sdk', version: '1.7.0'
         testImplementation group: "org.testng", name: "testng", version: "$testNgVersion"
+        testImplementation 'org.mockito:mockito-core:5.11.0'
 
         //table and record type use this internally and is required for table and record value types
-        testImplementation 'com.google.protobuf:protobuf-java:4.32.0'
+        testImplementation 'com.google.protobuf:protobuf-java:4.33.5'
 
         //https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
-        implementation 'org.seleniumhq.selenium:selenium-support:4.35.0'
-        implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.35.0'
-        implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.35.0'
-        implementation 'org.jsoup:jsoup:1.21.2'
+        implementation 'org.seleniumhq.selenium:selenium-support:4.40.0'
+        implementation 'org.seleniumhq.selenium:selenium-edge-driver:4.40.0'
+        implementation 'org.seleniumhq.selenium:selenium-chrome-driver:4.40.0'
+        implementation 'org.jsoup:jsoup:1.22.1'
     }
 
 }

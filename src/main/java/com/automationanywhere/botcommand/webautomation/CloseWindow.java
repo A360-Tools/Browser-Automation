@@ -14,6 +14,7 @@ import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import java.util.Set;
 import org.openqa.selenium.NoSuchSessionException;
+import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.WebDriver;
 
 
@@ -50,6 +51,8 @@ public class CloseWindow {
       }
 
 
+    } catch (NoSuchWindowException e) {
+      throw new BotCommandException("Close window failed: Browser window/tab is no longer available. " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Close currently active window failed: " + e.getMessage());
     }

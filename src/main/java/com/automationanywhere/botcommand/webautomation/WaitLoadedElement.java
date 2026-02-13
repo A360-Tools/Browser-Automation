@@ -14,6 +14,7 @@ import com.automationanywhere.commandsdk.annotations.rules.NotEmpty;
 import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
@@ -70,6 +71,8 @@ public class WaitLoadedElement {
         return new BooleanValue(false);
       }
       return new BooleanValue(true);
+    } catch (TimeoutException e) {
+      return new BooleanValue(false);
     } catch (Exception e) {
       throw new BotCommandException(
           "Wait element loaded failed" + search + " " + type + " : " + e.getMessage());

@@ -16,6 +16,7 @@ import com.automationanywhere.commandsdk.model.DataType;
 import java.time.Duration;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 @BotCommand
@@ -61,6 +62,8 @@ public class WaitLoadedPage {
           .toString().equals("complete");
 
       return new BooleanValue(isLoaded);
+    } catch (WebDriverException e) {
+      throw new BotCommandException("Wait page loaded failed: Browser communication error: " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Wait page loaded failed: " + e.getMessage());
     }

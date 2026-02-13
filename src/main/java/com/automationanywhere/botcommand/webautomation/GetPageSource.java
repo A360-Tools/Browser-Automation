@@ -14,6 +14,7 @@ import com.automationanywhere.commandsdk.annotations.rules.SessionObject;
 import com.automationanywhere.commandsdk.model.AttributeType;
 import com.automationanywhere.commandsdk.model.DataType;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 @BotCommand
 @CommandPkg(label = "Get Page Source", name = "pagesource",
@@ -42,6 +43,8 @@ public class GetPageSource {
 
       WebDriver driver = session.getDriver();
       html = driver.getPageSource();
+    } catch (WebDriverException e) {
+      throw new BotCommandException("Get page source failed: Browser communication error: " + e.getMessage());
     } catch (Exception e) {
       throw new BotCommandException("Get page source failed : " + e.getMessage());
     }
